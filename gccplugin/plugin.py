@@ -12,17 +12,18 @@ def on_pass_execution(p, fn):
       for var in gcc.get_variables():
          if isinstance(var.decl.type, gcc.RecordType):
             ops = None
-            if var.decl.type.name.name == 'super_operations':
-               ops = super_ops
-            elif var.decl.type.name.name == 'inode_operations':
-               ops = inode_ops
-            elif var.decl.type.name.name == 'file_operations':
-               ops = file_ops
-            elif var.decl.type.name.name == 'dentry_operations':
-               ops = dentry_ops
+            if var.decl.type.name:
+               if var.decl.type.name.name == 'super_operations':
+                  ops = super_ops
+               elif var.decl.type.name.name == 'inode_operations':
+                  ops = inode_ops
+               elif var.decl.type.name.name == 'file_operations':
+                  ops = file_ops
+               elif var.decl.type.name.name == 'dentry_operations':
+                  ops = dentry_ops
 
             if ops != None and var.decl.initial:
-               ops.update([b.operand.name for a,b in var.decl.initial.elements])
+               ops.update([b.operand.name for a,b in var.decl.initial.elements if isinstance(b, gcc.AddrExpr)])
 
       if super_ops or inode_ops or dentry_ops or file_ops:
          with open('%s-vfs_ops.sprute' % (gcc.get_dump_base_name()), 'w') as f:
