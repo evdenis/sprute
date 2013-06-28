@@ -30,7 +30,8 @@ def on_pass_execution(p, fn):
                if i[1]:
                  f.write( '<' + '#'*20 + ' ' + i[0] + ' ' + '#'*20 + '\n' )
                  f.write('\n'.join(i[1]) + '\n' )
-                 f.write( '#'*50 + '>' )
+                 f.write( '#'*50 + '>\n' )
+
 
 gcc.register_callback(gcc.PLUGIN_PASS_EXECUTION, on_pass_execution)
 
