@@ -1,0 +1,41 @@
+
+function current_task_name:string ()
+{
+   return task_execname(task_current())
+}
+
+function current_task_state:long ()
+{
+   return task_state(task_current())
+}
+
+function current_task_pid:long ()
+{
+   return task_pid(task_current())
+}
+
+function current_task_tid:long ()
+{
+   return task_tid(task_current())
+}
+
+function current_task_gid:long ()
+{
+   return task_gid(task_current())
+}
+
+function current_task_egid:long ()
+{
+   return task_egid(task_current())
+}
+
+function current_task_uid:long ()
+{
+   return task_uid(task_current())
+}
+
+function current_task_euid:long ()
+{
+   return task_euid(task_current())
+}
+

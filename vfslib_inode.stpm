@@ -1,0 +1,66 @@
+@define ops_inode_lookup(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_permission(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_create(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_link(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_unlink(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_symlink(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_mkdir(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_rmdir(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_mknod(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_rename(inode1, inode2)
+%(
+   make_inode_concolic(@inode1)
+   make_inode_concolic(@inode2)
+%)
+
+@define ops_inode_fiemap(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_update_time(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_inode_atomic_open(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+

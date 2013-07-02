@@ -1,0 +1,29 @@
+probe module("vfat").function("fat_file_release") {
+   inode = $inode
+
+   @ops_file_release(inode)
+}
+
+probe module("vfat").function("fat_write_inode") {
+   inode = $inode
+
+   @ops_super_write_inode(inode)
+}
+
+probe module("vfat").function("fat_alloc_inode") {
+   inode = $inode
+
+   @ops_super_alloc_inode(inode)
+}
+
+probe module("vfat").function("fat_destroy_inode") {
+   inode = $inode
+
+   @ops_super_destroy_inode(inode)
+}
+
+probe module("vfat").function("fat_evict_inode") {
+   inode = $inode
+
+   @ops_super_evict_inode(inode)
+}

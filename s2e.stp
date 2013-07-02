@@ -1,0 +1,516 @@
+/*
+ * S2E Selective Symbolic Execution Framework
+ *
+ * Copyright (c) 2010, Dependable Systems Laboratory, EPFL
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the Dependable Systems Laboratory, EPFL nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE DEPENDABLE SYSTEMS LABORATORY, EPFL BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Currently maintained by:
+ *    Volodymyr Kuznetsov <vova.kuznetsov@epfl.ch>
+ *    Vitaly Chipounov <vitaly.chipounov@epfl.ch>
+ *
+ * All contributors are listed in the S2E-AUTHORS file.
+ */
+
+%{
+#define S2E_INSTRUCTION_COMPLEX(val1, val2)             \
+    ".byte 0x0F, 0x3F\n"                                \
+    ".byte 0x00, 0x" #val1 ", 0x" #val2 ", 0x00\n"      \
+    ".byte 0x00, 0x00, 0x00, 0x00\n"
+
+#define S2E_INSTRUCTION_SIMPLE(val)                     \
+    S2E_INSTRUCTION_COMPLEX(val, 00)
+
+#ifdef __x86_64__
+#define S2E_INSTRUCTION_REGISTERS_COMPLEX(val1, val2)   \
+        "push %%rbx\n"                                  \
+        "mov %%rdx, %%rbx\n"                            \
+        S2E_INSTRUCTION_COMPLEX(val1, val2)             \
+        "pop %%rbx\n"
+#else
+#define S2E_INSTRUCTION_REGISTERS_COMPLEX(val1, val2)   \
+        "pushl %%ebx\n"                                 \
+        "movl %%edx, %%ebx\n"                           \
+        S2E_INSTRUCTION_COMPLEX(val1, val2)             \
+        "popl %%ebx\n"
+#endif
+
+#define S2E_INSTRUCTION_REGISTERS_SIMPLE(val)           \
+    S2E_INSTRUCTION_REGISTERS_COMPLEX(val, 00)
+
+
+typedef struct _s2e_opcode_module_config_t {
+    uint64_t name;
+    uint64_t nativeBase;
+    uint64_t loadBase;
+    uint64_t entryPoint;
+    uint64_t size;
+    uint32_t kernelMode;
+} __attribute__((packed)) s2e_opcode_module_config_t;
+
+typedef unsigned long ulong;
+
+/** Forces the read of every byte of the specified string.
+  * This makes sure the memory pages occupied by the string are paged in
+  * before passing them to S2E, which can't page in memory by itself. */
+static inline void __s2e_touch_string(volatile const char *string)
+{
+    while (*string) {
+        ++string;
+    }
+}
+
+static inline void __s2e_touch_buffer(volatile void *buffer, unsigned long size)
+{
+    unsigned long i;
+    volatile char *b = (volatile char *) buffer;
+    for (i = 0; i < size; ++i) {
+        *b; ++b;
+    }
+}
+
+%}
+
+/** Get S2E version or 0 when running without S2E. */
+function s2e_version:long()
+%{
+    int version;
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(00)
+        : "=a" (version)  : "a" (0)
+    );
+    return (long) version;
+%}
+
+/** Print message to the S2E log. */
+function s2e_message(message:string)
+%{
+    __s2e_touch_string(STAP_ARG_message);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(10)
+        : : "a" (STAP_ARG_message)
+    );
+%}
+
+/** Print warning to the S2E log and S2E stdout. */
+function s2e_warning(message:string)
+%{
+    __s2e_touch_string(STAP_ARG_message);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(10, 01)
+        : : "a" (STAP_ARG_message)
+    );
+%}
+
+/** Print symbolic expression to the S2E log. */
+function s2e_print_expression(name:string, expression:long)
+%{
+    __s2e_touch_string(STAP_ARG_name);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(07, 01)
+        : : "a" ((uint32_t)STAP_ARG_expression), "c" (STAP_ARG_name)
+    );
+%}
+
+/** Enable forking on symbolic conditions. */
+function s2e_enable_forking()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(09)
+    );
+%}
+
+/** Disable forking on symbolic conditions. */
+function s2e_disable_forking()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(0A)
+    );
+%}
+
+/** Yield the current state */
+function s2e_yield()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(0F)
+    );
+%}
+
+/** Get the current execution path/state id. */
+static inline unsigned s2e_get_path_id(void)
+{
+    unsigned id;
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(05)
+        : "=a" (id)
+    );
+    return id;
+}
+
+/** Fill buffer with unconstrained symbolic values. */
+function s2e_make_symbolic(buf:long, size:long, name:string)
+%{
+    __s2e_touch_string(STAP_ARG_name);
+    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(03)
+        : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size), "c" (STAP_ARG_name) : "memory"
+    );
+%}
+
+/** Fill buffer with unconstrained symbolic values without discarding concrete data. */
+function s2e_make_concolic(buf:long, size:long, name:string)
+%{
+    __s2e_touch_string(STAP_ARG_name);
+    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(11)
+        : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size), "c" (STAP_ARG_name) : "memory"
+    );
+%}
+
+
+/** Adds a constraint to the current state. The constraint must be satisfiable. */
+function s2e_assume(expression:long)
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(0c)
+        : : "a" ((uint32_t)expression)
+    );
+%}
+
+
+/** Returns true if ptr points to symbolic memory */
+function s2e_is_symbolic:long(ptr:long, size:long)
+%{
+    int result;
+    __s2e_touch_buffer((void*)STAP_ARG_ptr, 1);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(04)
+        : "=a" (result) : "a" ((uint32_t)STAP_ARG_size), "c" ((uint32_t)STAP_ARG_ptr)
+    );
+    return (long) result;
+%}
+
+/** Concretize the expression. */
+function s2e_concretize(buf:long, size:long)
+%{
+    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(20)
+        : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size) : "memory"
+    );
+%}
+
+/** Get example value for expression (without adding state constraints). */
+function s2e_get_example(buf:long, size:long)
+%{
+    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(21)
+        : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size) : "memory"
+    );
+%}
+
+/** Get example value for expression (without adding state constraints). */
+/** Convenience function to be used in printfs */
+function s2e_get_example_uint:long(val:long)
+%{
+    unsigned int buf = (uint32_t)STAP_ARG_val;
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(21)
+        : : "a" (&buf), "d" (sizeof(buf)) : "memory"
+    );
+    return (long)buf;
+%}
+
+/** Terminate current state. */
+function s2e_kill_state(status:long, message:string)
+%{
+    __s2e_touch_string(STAP_ARG_message);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(06)
+        : : "a" ((uint32_t)STAP_ARG_status), "d" (STAP_ARG_message)
+    );
+%}
+
+/** Disable timer interrupt in the guest. */
+function s2e_disable_timer_interrupt()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(50, 01)
+    );
+%}
+
+/** Enable timer interrupt in the guest. */
+function s2e_enable_timer_interrupt()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(50)
+    );
+%}
+
+/** Disable all APIC interrupts in the guest. */
+function s2e_disable_all_apic_interrupts()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(51, 01)
+    );
+%}
+
+/** Enable all APIC interrupts in the guest. */
+function s2e_enable_all_apic_interrupts()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(51)
+    );
+%}
+
+/** Get the current S2E_RAM_OBJECT_BITS configuration macro */
+function s2e_get_ram_object_bits:long()
+%{
+    int bits;
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(52)
+        : "=a" (bits)  : "a" (0)
+    );
+    return (long) bits;
+%}
+
+/** Declare a merge point: S2E will try to merge
+ *  all states when they reach this point.
+ *
+ * NOTE: This requires the merge searcher to be enabled. */
+function s2e_merge_point()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(70)
+    );
+%}
+
+/** Open file from the guest.
+ *
+ * NOTE: This requires the HostFiles plugin. */
+function s2e_open:long(fname:string)
+%{
+    int fd;
+    __s2e_touch_string(STAP_ARG_fname);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(EE)
+        : "=a" (fd) : "a"(-1), "b" (STAP_ARG_fname), "c" (0)
+    );
+    return (long) fd;
+%}
+
+/** Close file from the guest.
+ *
+ * NOTE: This requires the HostFiles plugin. */
+function s2e_close:long(fd:long)
+%{
+    int res;
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(EE, 01)
+        : "=a" (res) : "a" (-1), "b" ((uint32_t)STAP_ARG_fd)
+    );
+    return (long) res;
+%}
+
+/** Read file content from the guest.
+ *
+ * NOTE: This requires the HostFiles plugin. */
+function s2e_read:long(fd:long, buf:string, count:long)
+%{
+    int res;
+    __s2e_touch_buffer(STAP_ARG_buf, (ulong)STAP_ARG_count);
+    __asm__ __volatile__(
+#ifdef __x86_64__
+        "push %%rbx\n"
+        "mov %%rsi, %%rbx\n"
+#else
+        "pushl %%ebx\n"
+        "movl %%esi, %%ebx\n"
+#endif
+        S2E_INSTRUCTION_COMPLEX(EE, 02)
+#ifdef __x86_64__
+        "pop %%rbx\n"
+#else
+        "popl %%ebx\n"
+#endif
+        : "=a" (res) : "a" (-1), "S" ((uint32_t)STAP_ARG_fd), "c" (STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_count)
+    );
+    return (long) res;
+%}
+
+/** Enable memory tracing */
+function s2e_memtracer_enable()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(AC)
+    );
+%}
+
+/** Disable memory tracing */
+function s2e_memtracer_disable()
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(AC, 01)
+    );
+%}
+
+/** Raw monitor plugin */
+/** Communicates to S2E the coordinates of loaded modules. Useful when there is
+    no plugin to automatically parse OS data structures. */
+function s2e_rawmon_loadmodule(name:string, loadbase:long, size:long)
+%{
+    __s2e_touch_string(STAP_ARG_name);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_REGISTERS_SIMPLE(AA)
+        : : "a" (STAP_ARG_name), "d" ((uint32_t)STAP_ARG_loadbase), "c" ((uint32_t)STAP_ARG_size)
+    );
+%}
+
+/** Raw monitor plugin */
+/** Communicates to S2E the coordinates of loaded modules. Useful when there is
+    no plugin to automatically parse OS data structures. */
+function s2e_rawmon_loadmodule2( name:string,
+                                 nativebase:long,
+                                 loadbase:long,
+                                 entrypoint:long,
+                                 size:long,
+                                 kernelMode:long)
+%{
+    s2e_opcode_module_config_t cfg;
+    cfg.name = (uintptr_t) STAP_ARG_name;
+    cfg.nativeBase = (uint64_t) STAP_ARG_nativebase;
+    cfg.loadBase = (uint64_t) STAP_ARG_loadbase;
+    cfg.entryPoint = (uint64_t) STAP_ARG_entrypoint;
+    cfg.size = (uint64_t) STAP_ARG_size;
+    cfg.kernelMode = (uint32_t) STAP_ARG_kernelMode;
+
+    __s2e_touch_string(STAP_ARG_name);
+
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(AA, 02)
+        : : "c" (&cfg)
+    );
+%}
+
+/** CodeSelector plugin */
+/** Enable forking in the current process (entire address space or user mode only). */
+function s2e_codeselector_enable_address_space(user_mode_only:long)
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(AE)
+        : : "c" ((uint32_t)STAP_ARG_user_mode_only)
+    );
+%}
+
+/** Disable forking in the specified process (represented by its page directory).
+    If pagedir is 0, disable forking in the current process. */
+function s2e_codeselector_disable_address_space(pagedir:long)
+%{
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(AE, 01)
+        : : "c" ((uint64_t)STAP_ARG_pagedir)
+    );
+%}
+
+function s2e_codeselector_select_module(moduleId:string)
+%{
+    __s2e_touch_string(STAP_ARG_moduleId);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_COMPLEX(AE, 02)
+        : : "c" (STAP_ARG_moduleId)
+    );
+%}
+
+/** Programmatically add a new configuration entry to the ModuleExecutionDetector plugin. */
+function s2e_moduleexec_add_module(moduleId:string, moduleName:string, kernelMode:long)
+%{
+    __s2e_touch_string(STAP_ARG_moduleId);
+    __s2e_touch_string(STAP_ARG_moduleName);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(AF)
+            : : "c" (STAP_ARG_moduleId), "a" (STAP_ARG_moduleName), "d" ((uint32_t)STAP_ARG_kernelMode)
+    );
+%}
+
+/* Kills the current state if b is zero. */
+function _s2e_assert(b:long, expression:string)
+{
+    if (!b) {
+        s2e_kill_state(0, expression);
+    }
+}
+
+function s2e_assert(expression:string)
+{
+   _s2e_assert(expression, "Assertion failed: " . expression)
+}
+
+/** Returns a symbolic value in [start, end). */
+function s2e_range:long(start:long, end:long, name:string)
+{
+   long x = -1;
+
+   if (start >= end) {
+      s2e_kill_state(1, "s2e_range: invalid range")
+   }
+
+   if (start + 1 == end) {
+      return start
+   } else {
+      s2e_make_symbolic( &x, sizeof(x), STAP_ARG_name);
+
+      /* Make nicer constraint when simple... */
+      if (start == 0) {
+         if (x >= end) {
+            s2e_kill_state(0, "s2e_range creating a constraint...");
+         }
+      } else {
+         if (x < start || x >= end) {
+            s2e_kill_state(0, "s2e_range creating a constraint...");
+         }
+      }
+
+      return x
+   }
+}
+
+/**
+ *  Transmits a buffer of dataSize length to the plugin named in pluginName.
+ *  eax contains the failure code upon return, 0 for success.
+ */
+function s2e_invoke_plugin:long(pluginName:string, data:long, dataSize:long)
+%{
+    int result;
+    __s2e_touch_string(STAP_ARG_pluginName);
+    __s2e_touch_buffer((void *)STAP_ARG_data, (ulong)STAP_ARG_dataSize);
+    __asm__ __volatile__(
+        S2E_INSTRUCTION_SIMPLE(0B)
+        : "=a" (result) : "a" (STAP_ARG_pluginName), "c" ((uint32_t)STAP_ARG_data), "d" ((uint32_t)STAP_ARG_dataSize) : "memory"
+    );
+
+    return (long) result;
+%}
