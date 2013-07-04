@@ -12,6 +12,13 @@ ops_inode_fiemap
 ops_inode_update
 ops_inode_atomic
 
+ops_file_llseek(file)
+ops_file_read(file)
+ops_file_write(file)
+ops_file_aio_read()
+ops_file_aio_write()
+ops_file_readdir(file)
+
 ops_file_open
 ops_file_release
 

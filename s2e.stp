@@ -158,15 +158,15 @@ function s2e_yield()
 %}
 
 /** Get the current execution path/state id. */
-static inline unsigned s2e_get_path_id(void)
-{
+function s2e_get_path_id:long()
+%{
     unsigned id;
     __asm__ __volatile__(
         S2E_INSTRUCTION_SIMPLE(05)
         : "=a" (id)
     );
-    return id;
-}
+    return (long) id;
+%}
 
 /** Fill buffer with unconstrained symbolic values. */
 function s2e_make_symbolic(buf:long, size:long, name:string)
