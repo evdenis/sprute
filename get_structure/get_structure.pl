@@ -5,6 +5,8 @@ use warnings;
 use 5.10.0;
 use feature qw(say);
 
+use File::Basename;
+use File::Slurp qw(read_file);
 use Getopt::Long qw(:config gnu_getopt);
 
 my $path = '';
@@ -30,47 +32,166 @@ if ( ! -r $path or !$struct_name ) {
    die "Incorrect usage!\n";
 }
 
-if ( -d $path ) {
-   my $exec_str = 'grep --include="*.h" -lre "struct[[:blank:]]\+' . $struct_name . '[[:blank:]]\+{"' . ' ' . $path;
-   my @files = qx($exec_str);
+my $defn_file = $path;
+my @decl_files;
+my $decl_query = 'grep --include="*.c" -lre "struct[[:blank:]]\+' . $struct_name . '[[:blank:]]\+[[:alnum:]_]\+[[:blank:]]*=[[:blank:]]*{"' . ' ';
 
-   if ( @files eq 0 ) {
+if ( -d $path ) {
+   my $defn_query = 'grep --include="*.h" -lre "struct[[:blank:]]\+' . $struct_name . '[[:blank:]]*{"' . ' ' . $path;
+   my @defn_files = qx($defn_query);
+
+   if ( @defn_files eq 0 ) {
       die "Error: could not find definition\n";
-   } elsif ( @files gt 1 ) {
+   } elsif ( @defn_files gt 1 ) {
       die "Error: multiple definition\n";
    } else {
-      $path = $files[0];
-      chomp $path;
+      $defn_file = $defn_files[0];
+      chomp $defn_file;
    }
+} else {
+   $path = dirname($path);
 }
 
-local $/ = undef;
+$path =~ s/include.*$//;
+$decl_query .= $path;
+@decl_files = qx($decl_query);
 
-open my $fh, "<", $path
-   or die "could not open $path: $!";
-my $file = <$fh>;
-close $fh;
+my $file = read_file($defn_file);
 
+sub find_arg_name
+{
+   my ($file_name, $struct_name, $line, $field_name, $arg_num) = @_;
+   my $file = read_file($file_name);
+
+   while ( $file =~ m/
+      (?<sdefn>
+         struct
+         \s+
+            $struct_name
+         \s+
+         \w+ #struct name
+         \s*
+         =
+         \s*
+         (?>
+            (?<sbody>
+            \{
+               (?:
+                  (?>[^\{\}]+)
+                  |
+                  (?&sbody)
+               )*
+            \}
+            )
+         )
+      )
+      /gmx) {
+      my $sinit = $+{sbody};
+
+      $sinit =~ m/\.$field_name\s*=\s*(?<fn_name>\w+),?/m;
+      my $init_func_name = $+{fn_name};
+
+      if ( $init_func_name ) {
+         my $ret_val = substr($line, 0, index($line, '(') - 1);
+
+         $ret_val =~ s/^\s*//g;
+         $ret_val =~ s/\s*$//g;
+         $ret_val .= $ret_val =~ m/\*$/ ? '\s*' : '\s+';
+
+         $ret_val =~ s/\s+/ /g;
+         $ret_val =~ s/(?<!\*) (?=\w)/\\s+/g;
+         $ret_val =~ s/ \*/\\s*\\*/g;
+         $ret_val =~ s/\*\*/\\*\\s*\\*/g;
+         $ret_val =~ s/\* /\\*\\s*/g;
+
+         my $saved_pos = pos($file);
+         pos($file) = 0;
+
+         while ( $file =~ m/
+               $ret_val
+               $init_func_name
+               \s*                  # spaces between name and arguments
+               (?<fargs>
+                  \(
+                   (?:
+                      (?>[^\(\)]+)
+                      |
+                      (?&fargs)
+                   )+
+                  \)
+               )
+               \s*                  # spaces between arguments and function body
+               (?:
+                  (?:
+                     (?:__(?:acquires|releases|attribute__)\s*(?<margs>\((?:(?>[^\(\)]+)|(?&margs))+\)))
+                     |
+                     __attribute_const__
+                     |
+                     CONSTF
+                     |
+                     \\
+                  )\s*
+               )*
+               (?>
+                  (?<fbody>                    # function body group
+                     \{                # begin of function body
+                     (?:               # recursive pattern
+                        (?>[^\{\}]+)
+                        |
+                        (?&fbody)
+                     )*
+                     \}                # end of function body
+                  )
+               )
+            /gmx ) {
+            my $fargs = $+{fargs};
+            $fargs =~ s/^\(\s*//;
+            $fargs =~ s/\s*\)$//;
+            my @args = split /,/, $fargs;
+
+            $args[$arg_num] =~ m/(?<arg_name>\w+)\s*$/;
+            return $+{arg_name};
+         }
+
+         pos($file) = $saved_pos;
+      }
+   }
+
+   return '';
+}
+
+sub check_arg_name
+{
+   my $argline = $_[0];
+
+   $argline =~ s/^\s*//;
+   $argline =~ s/\s*$//;
+
+   $argline =~ s/(\b(static|inline|extern|const|volatile|enum|struct|union|__user)\s+)*//g;
+   $argline =~ s/\*//g;
+   $argline =~ s/long\s+(?=long)//;
+   $argline =~ s/unsigned\s+(?=(long|int|char|short))//;
+   $argline =~ m/\w+\s+(?<arg_name>\w+)/;
+   return $+{arg_name};
+}
 
 while ( $file =~ m/
    (?<sdecl>
-
-   struct
-   \s+
-      $struct_name
-   \s*
-   (?>
-      (?<sbody>
-      \{
-         (?:
-            (?>[^\{\}]+)
-            |
-            (?&sbody)
-         )*
-      \}
+      struct
+      \s+
+         $struct_name
+      \s*
+      (?>
+         (?<sbody>
+         \{
+            (?:
+               (?>[^\{\}]+)
+               |
+               (?&sbody)
+            )*
+         \}
+         )
       )
-   )
-
    )
    /gmx) {
 
@@ -131,15 +252,15 @@ while ( $file =~ m/
          foreach my $line (@lines) {
 
             $line =~ s/\n//mg;
-            $line =~ s/\s\s+/ /g;
+            $line =~ s/\s+/ /g;
 
             if ( $line =~ m/\(\*(?<fname>\w+)\)\s*(?<fargs>\((?:(?>[^()]+)|(?&fargs))+\))/ ) {
                sub arg_normalize {
-                  my $count = () = $_[0] =~ m/$_[1]/g;
+                  my $count = () = $_[0] =~ m/\b$_[1]\b/g;
 
                   if ($count > 1) {
                      my $i = 1;
-                     $_[0] =~ s/$_[1]/sub { return $_[0].$i++; }->($_[1]);/eg;
+                     $_[0] =~ s/\b$_[1]\b/sub { return $_[0].$i++; }->($_[1]);/eg;
                   }
                }
 
@@ -150,19 +271,31 @@ while ( $file =~ m/
                my @args = split /,/, $fargs;
                my $argline = '(';
 
-               foreach my $arg (@args) {
+               foreach my $i (0 .. $#args) {
                   sub arg_filter {
-                     $_[0] = $_[1] if $_[0] =~ m/struct\s+$_[1]/;
+                     $_[0] = $_[1] if $_[0] =~ m/\bstruct\s+$_[1]/;
                   }
-                  if (
-                     ! arg_filter( $arg, "inode" ) &&
-                     ! arg_filter( $arg, "dentry" ) &&
-                     ! arg_filter( $arg, "file" ) &&
-                     ! arg_filter( $arg, "super" ) 
-                  ) {
-                     $arg = '';
+                  if ($args[$i] eq 'void') {
+                     $args[$i] = '';
+                  } else {
+                     if (
+                        ! arg_filter( $args[$i], "inode" ) &&
+                        ! arg_filter( $args[$i], "dentry" ) &&
+                        ! arg_filter( $args[$i], "file" ) &&
+                        ! arg_filter( $args[$i], "super" )
+                     ) {
+                        my $arg_name = check_arg_name($args[$i]);
+                        if (!$arg_name) {
+                           foreach my $fl (@decl_files) {
+                              chomp $fl;
+                              $arg_name = find_arg_name($fl, $struct_name, $line, $fname, $i);
+                              last if ($arg_name);
+                           }
+                        }
+                        $args[$i] = $arg_name;
+                    }
                   }
-                  $argline .= $arg . ', ' if $arg;
+                  $argline .= $args[$i] . ', ' if $args[$i];
                }
 
                $argline =~ s/, $//;
