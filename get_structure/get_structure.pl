@@ -134,6 +134,15 @@ while ( $file =~ m/
             $line =~ s/\s\s+/ /g;
 
             if ( $line =~ m/\(\*(?<fname>\w+)\)\s*(?<fargs>\((?:(?>[^()]+)|(?&fargs))+\))/ ) {
+               sub arg_normalize {
+                  my $count = () = $_[0] =~ m/$_[1]/g;
+
+                  if ($count > 1) {
+                     my $i = 1;
+                     $_[0] =~ s/$_[1]/sub { return $_[0].$i++; }->($_[1]);/eg;
+                  }
+               }
+
                my $fname = $+{fname};
                my $fargs = $+{fargs};
                $fargs =~ s/^\(//;
@@ -153,13 +162,18 @@ while ( $file =~ m/
                   ) {
                      $arg = '';
                   }
-                  $argline .= $arg . ', ' if $arg; 
+                  $argline .= $arg . ', ' if $arg;
                }
 
                $argline =~ s/, $//;
                $argline .= ')';
 
-               say $fname . ' ' . $argline;
+               arg_normalize( $argline, "inode" );
+               arg_normalize( $argline, "dentry" );
+               arg_normalize( $argline, "file" );
+               arg_normalize( $argline, "super" );
+
+               say $fname . $argline;
             }
          }
       }
