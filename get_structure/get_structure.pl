@@ -7,6 +7,7 @@ use feature qw(say);
 
 use File::Basename;
 use File::Slurp qw(read_file);
+use List::MoreUtils qw(uniq);
 use Getopt::Long qw(:config gnu_getopt);
 
 my $path = '';
@@ -57,6 +58,15 @@ $decl_query .= $path;
 @decl_files = qx($decl_query);
 
 my $file = read_file($defn_file);
+
+sub preffered_names
+{
+   my @return;
+   foreach my $i ($_[0]) {
+      push(@return, $i) if $i =~ m/(flag|ioctl)/;
+   }
+   return @return;
+}
 
 sub find_arg_name
 {
@@ -157,7 +167,7 @@ sub find_arg_name
       }
    }
 
-   return '';
+   return;
 }
 
 sub check_arg_name
@@ -286,11 +296,21 @@ while ( $file =~ m/
                      ) {
                         my $arg_name = check_arg_name($args[$i]);
                         if (!$arg_name) {
-                           foreach my $fl (@decl_files) {
-                              chomp $fl;
-                              $arg_name = find_arg_name($fl, $struct_name, $line, $fname, $i);
-                              last if ($arg_name);
+                           my @arg_names;
+                           foreach my $j (0 .. $#decl_files) {
+                              chomp $decl_files[$j];
+                              $arg_name = find_arg_name($decl_files[$j], $struct_name, $line, $fname, $i);
+                              if ($arg_name) {
+                                 push(@arg_names, $arg_name);
+                                 last if (length($arg_name) >= 3 && $j == 0);
+                              }
                            }
+                           @arg_names = uniq(@arg_names);
+                           @arg_names = reverse sort {length $a <=> length $b} @arg_names;
+                           if (scalar(@arg_names) == 0) { say "ERROR: " }
+                           my @pr_arg_names = preffered_names(@arg_names);
+                           $arg_name = $arg_names[int($#arg_names/2)];
+                           #$arg_name = $arg_names[0];
                         }
                         $args[$i] = $arg_name;
                     }
