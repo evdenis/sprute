@@ -102,7 +102,7 @@ sub find_arg_name
       my $init_func_name = $+{fn_name};
 
       if ( $init_func_name ) {
-         my $ret_val = substr($line, 0, index($line, '(') - 1);
+         my $ret_val = substr($line, 0, index($line, '('));
 
          $ret_val =~ s/^\s*//g;
          $ret_val =~ s/\s*$//g;
