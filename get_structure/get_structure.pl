@@ -35,7 +35,7 @@ if ( ! -r $path or !$struct_name ) {
 
 my $defn_file = $path;
 my @decl_files;
-my $decl_query = 'grep --include="*.c" -lre "struct[[:blank:]]\+' . $struct_name . '[[:blank:]]\+[[:alnum:]_]\+[[:blank:]]*=[[:blank:]]*{"' . ' ';
+my $decl_query = 'grep --include="*.c" -lre "struct[[:blank:]]\+' . $struct_name . '[[:blank:]]\+[[:alnum:]_]\+[[:blank:]]*=" ';
 
 if ( -d $path ) {
    my $defn_query = 'grep --include="*.h" -lre "struct[[:blank:]]\+' . $struct_name . '[[:blank:]]*{"' . ' ' . $path;
