@@ -155,6 +155,7 @@ sub find_arg_name
                )
             /gmx ) {
             my $fargs = $+{fargs};
+            $fargs =~ s/\b__(user|maybe_unused)\b//g;
             $fargs =~ s/^\(\s*//;
             $fargs =~ s/\s*\)$//;
             my @args = split /,/, $fargs;
@@ -174,10 +175,11 @@ sub check_arg_name
 {
    my $argline = $_[0];
 
+   $argline =~ s/\b__user\b//g;
    $argline =~ s/^\s*//;
    $argline =~ s/\s*$//;
 
-   $argline =~ s/(\b(static|inline|extern|const|volatile|enum|struct|union|__user)\s+)*//g;
+   $argline =~ s/(\b(static|inline|extern|const|volatile|enum|struct|union)\s+)*//g;
    $argline =~ s/\*//g;
    $argline =~ s/long\s+(?=long)//;
    $argline =~ s/unsigned\s+(?=(long|int|char|short))//;
