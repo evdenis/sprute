@@ -61,11 +61,11 @@ my $file = read_file($defn_file);
 
 sub preffered_names
 {
-   my @return;
+   my @ret;
    foreach my $i ($_[0]) {
-      push(@return, $i) if $i =~ m/(flag|ioctl)/;
+      push(@ret, $i) if $i =~ m/(addr|buf(fer)?|cmd|fd|flags?|fpos|iocb|iocmd|ioctl|len(gth)?|offset|page|pos|ppos|size|start)/;
    }
-   return @return;
+   return @ret;
 }
 
 sub find_arg_name
@@ -309,10 +309,21 @@ while ( $file =~ m/
                            }
                            @arg_names = uniq(@arg_names);
                            @arg_names = reverse sort {length $a <=> length $b} @arg_names;
-                           if (scalar(@arg_names) == 0) { say "ERROR: " }
-                           my @pr_arg_names = preffered_names(@arg_names);
-                           $arg_name = $arg_names[int($#arg_names/2)];
-                           #$arg_name = $arg_names[0];
+                           if (scalar(@arg_names) == 0)
+                           {
+                              print STDERR "Not able to find argument name for:\n";
+                              print STDERR "structure: $struct_name\n";
+                              print STDERR "operation: $line\n";
+                              print STDERR "argument:  $i\n";
+                              print STDERR "Assigning default name: 'var'\n";
+                              push(@arg_names, 'var');
+                           }
+                           #my @pr_arg_names = preffered_names(@arg_names);
+                           #say STDERR join(' ', @arg_names);
+                           $arg_name = $arg_names[0];
+                           #$arg_name = $arg_names[int($#arg_names/2)];
+                           #$arg_name = $pr_arg_names[0] ? $pr_arg_names[0] : $arg_names[0];
+                           #$arg_name = $pr_arg_names[0] ? $pr_arg_names[0] : $arg_names[int($#arg_names/2)];
                         }
                         $args[$i] = $arg_name;
                     }
@@ -327,6 +338,8 @@ while ( $file =~ m/
                arg_normalize( $argline, "dentry" );
                arg_normalize( $argline, "file" );
                arg_normalize( $argline, "super" );
+               # This is for names, that can't find.
+               arg_normalize( $argline, "var" );
 
                say $fname . $argline;
             }
