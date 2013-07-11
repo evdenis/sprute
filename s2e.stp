@@ -472,7 +472,7 @@ function s2e_assert(expression:string)
 /** Returns a symbolic value in [start, end). */
 function s2e_range:long(start:long, end:long, name:string)
 {
-   long x = -1;
+   x = -1;
 
    if (start >= end) {
       s2e_kill_state(1, "s2e_range: invalid range")
@@ -481,7 +481,7 @@ function s2e_range:long(start:long, end:long, name:string)
    if (start + 1 == end) {
       return start
    } else {
-      s2e_make_symbolic( &x, sizeof(x), STAP_ARG_name);
+      s2e_make_symbolic( %{ &x %}, %{ sizeof(x) %}, name);
 
       /* Make nicer constraint when simple... */
       if (start == 0) {
