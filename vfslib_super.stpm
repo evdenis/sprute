@@ -1,0 +1,18 @@
+
+@define ops_super_write_inode(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_super_alloc_inode(inode)
+%(
+   make_inode_concolic(@inode)
+%)
+
+@define ops_super_destroy_inode(inode)
+%(
+%)
+
+@define ops_super_evict_inode(inode)
+%(
+%)
