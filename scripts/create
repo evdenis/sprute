@@ -1,0 +1,51 @@
+#!/usr/bin/guestfish -f
+
+trace on
+
+set-network true
+# 20G = 41943040 sectors
+# 1G  = 2097152  sectors
+# 1M  = 2048     sectors
+sparse test1.img 20G
+run
+part-init /dev/sda gpt
+# boot
+# 2048 + 128M 
+part-add  /dev/sda p 2048 264192
+# swap 1G
+part-add  /dev/sda p 264193 2361345
+# root 10G 
+part-add  /dev/sda p 2361346 23332866
+# -1 doesn't work
+# filesystem test partition
+part-add  /dev/sda p 23332867 41000000
+
+part-set-bootable /dev/sda 1 true
+# swap 0657FD6D-A4AB-43C4-84E5-0933C84B4F4F
+part-set-gpt-type /dev/sda 2 0657FD6D-A4AB-43C4-84E5-0933C84B4F4F
+# data 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+part-set-gpt-type /dev/sda 3 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+part-set-gpt-type /dev/sda 4 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+
+mkfs vfat /dev/sda1
+mkfs ext2 /dev/sda3
+
+#set-label /dev/sda1 boot
+#set-label /dev/sda2 swap
+set-label /dev/sda3 root
+#set-label /dev/sda4 test
+
+mkmountpoint /
+
+mount /dev/sda3 /
+
+mkdir /boot
+mount /dev/sda1 /boot
+
+rsync-in rsync://work@10.0.2.2:/debian / archive:true
+
+umount /dev/sda1
+umount /dev/sda3
+
+rmmountpoint /root
+
