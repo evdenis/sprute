@@ -33,91 +33,116 @@ proc def {} {
 }
 
 
-proc quote {str} {
-   string map {
+#proc quote {str} {
+#   string map {
 #      "("  "\\("
 #      {)}  {\\)}
 #      [  \\[
 #      ]  \\]
 #      {  \\{
 #      }  \\}
-      "\?"  "\\?"
+#      "\?"  "\\?"
 #      *  \\*
 #      +  \\+
-   } $str
+#   } $str
+#}
+
+proc quote {str} {
+   return "\\(${str}\\)"
 }
 
-#puts [concat [quote {64-bit kernel (64BIT) [N/y/?] }] "test"]
-#exit
+proc option {opt} {
+   return "\\(${opt}\\)\\s+\\\[\[YyNnMm\\?\\/\]+\\\](\\s+\\(NEW\\))?\\s+$"
+}
 
-#set timeout 2
+proc select {opt ynm} {
+   return "-re {[option $opt]} { $ynm; }"
+}
+
+proc configuration {opts} {
+   set str ""
+   foreach {i j} [concat $opts] {
+      append str [select $i $j] "\n"
+   }
+   uplevel 1 "
+      expect {
+         $str
+
+         -re {\\\[\[\\w\\\/\\?\\(\\).\\-]*\\\]:?(\\s+\\(NEW\\))?\\s+$} {
+            def
+         }
+         eof {
+            exit
+         }
+         timeout {
+            def
+         }
+      }"
+}
+
+
 spawn make config
+#spawn ./test.sh
+#sleep 5
 match_max 100000
 
+expect -ex "scripts/kconfig/conf --oldaskconfig Kconfig" { sleep 1; }
 
-# (EXT2_FS)
-# (EXT3_FS)
-# (EXT4_FS)
-# (REISERFS_FS)
-# (JFS_FS)
-# (XFS_FS)
-# (BTRFS_FS)
-# (MSDOS_FS)
-# (VFAT_FS)
-# (NTFS_FS)
-#
-# (CONFIGFS_FS)
-# (TMPFS)
-#
-# (MISC_FILESYSTEMS)
-#  (MINIX_FS)
-#
-# (DEBUG_KERNEL)
-#
-# (PANIC_ON_OOPS)
-# (DEBUG_SPINLOCK)
-# (DEBUG_MUTEXES)
-# (DEBUG_LOCK_ALLOC)
-# (DEBUG_ATOMIC_SLEEP)
-# (DEBUG_STACK_USAGE)
-#
-# (DEBUG_INFO)
-#
-# (DEBUG_WRITECOUNT)
-# (DEBUG_LIST)
-# (DEBUG_SG)
-#
-# (FRAME_POINTER)
-#
-# (DEBUG_STRICT_USER_COPY_CHECKS)
-# (DEBUG_PAGEALLOC)
+set timeout 1
 
-expect {
-#   -re {64-bit kernel \(64BIT\) \[[YyNnMm\?\/]+\]\s*$} {
-#      no
-#   }
-#	-re {Enable gcov-based kernel profiling \(GCOV_KERNEL\) \[[YyNnMm\?\/]+\]\s*$} {
-#		yes
-#	}
+configuration {
+   64BIT no
 
-   -re {\(64BIT\) \[[YyNnMm\?\/]+\]\s*$} {
-      no
-   }
-	-re {\(GCOV_KERNEL\) \[[YyNnMm\?\/]+\]\s*$} {
-		yes
-	}
+   GCOV_KERNEL      yes
+   GCOV_PROFILE_ALL no
 
-#(KALLSYMS) [Y/?]
+   REISERFS_FS             mod
+      REISERFS_CHECK          yes
+      REISERFS_FS_XATTR       yes
+      REISERFS_FS_POSIX_ACL   yes
+      REISERFS_FS_SECURITY    yes
 
-   -re {(\[(([YyNnMm\?\/]+)|((0x)?\d+)|((\(none\))|(\/sbin\/hotplug)|(rtc0)|(utf8)|(iso8859-1)))?\]|choice\[1(-\d+)?\??\]:)(\s+\(NEW\))?\s*$} {
-      def
-   }
+   JFS_FS            mod
+      JFS_POSIX_ACL     yes
+      JFS_SECURITY      yes
+      JFS_DEBUG         yes
 
-   eof {
-      exit
-   }
-   timeout {
-      def
-   }
+   XFS_FS            mod
+      XFS_QUOTA         yes
+      XFS_POSIX_ACL     yes
+      XFS_RT            yes
+      XFS_WARN          yes
+      XFS_DEBUG         yes
+
+
+   MSDOS_FS    mod
+   VFAT_FS     mod
+   NTFS_FS     mod
+      NTFS_RW     yes
+
+   CONFIGFS_FS       mod
+
+   MISC_FILESYSTEMS  yes
+      MINIX_FS          mod
+   
+   DEBUG_KERNEL                  yes
+   PANIC_ON_OOPS                 yes
+   DEBUG_SPINLOCK                yes
+   DEBUG_MUTEXES                 yes
+   DEBUG_LOCK_ALLOC              yes
+   DEBUG_ATOMIC_SLEEP            yes
+   DEBUG_STACK_USAGE             yes
+   DEBUG_INFO                    yes
+   DEBUG_WRITECOUNT              yes
+   DEBUG_LIST                    yes
+   DEBUG_SG                      yes
+   FRAME_POINTER                 yes
+   DEBUG_STRICT_USER_COPY_CHECKS yes
+   DEBUG_PAGEALLOC               yes
+
 }
+
+#   -re {(\[(([YyNnMm\?\/]+)|((0x)?\d+)|((\(none\))|(\/sbin\/hotplug)|(rtc0)|(utf8)|(iso8859-1)))?\]|choice\[1(-\d+)?\??\]:)(\s+\(NEW\))?\s*$} {
+#      def
+#   }
 
