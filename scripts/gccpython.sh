@@ -1,7 +1,5 @@
 #!/bin/bash -x
 
-# This script is ready to be added to cron.
-
 ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 declare -i processors_num=$(grep -e '^processor' < /proc/cpuinfo | wc -l)

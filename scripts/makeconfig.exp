@@ -86,7 +86,8 @@ spawn make config
 #sleep 5
 match_max 100000
 
-expect -ex "scripts/kconfig/conf --oldaskconfig Kconfig" { sleep 1; }
+#expect -ex "scripts/kconfig/conf --oldaskconfig Kconfig" { sleep 1; }
+expect -re {\* Linux\/x86 ([\d\.]+) Kernel Configuration} { sleep 1; }
 
 set timeout 1
 
