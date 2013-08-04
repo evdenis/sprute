@@ -2,9 +2,10 @@
 
 ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-declare -i processors_num=$(grep -e '^processor' < /proc/cpuinfo | wc -l)
-declare -i threads_num=$(( $processors_num * ${PR_COEFF:-1} ))
-[[ $threads_num -eq 0 ]] && threads_num=1
+source "${ldir}/lib/common.sh"
+
+
+lock_script
 
 pdir=''
 
@@ -67,18 +68,12 @@ install_gcc_plugin_dev () {
 	return 0
 }
 
-check_root () {
-	if [[ $EUID -ne 0 ]]
-	then
-		echo "This script must be run as root" 1>&2
-		exit 1
-	fi
-}
-
 check_root
 
 install_gcc_plugin_dev &&
 get_gccpython     &&
 compile_gccpython &&
 install_gccpython
+
+unlock_script
 

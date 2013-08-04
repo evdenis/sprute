@@ -2,9 +2,9 @@
 
 ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-declare -i processors_num=$(grep -e '^processor' < /proc/cpuinfo | wc -l)
-declare -i threads_num=$(( $processors_num * ${PR_COEFF:-1} ))
-[[ $threads_num -eq 0 ]] && threads_num=1
+source "${ldir}/lib/common.sh"
+
+lock_script
 
 kdir=''
 
@@ -75,4 +75,6 @@ get_kernel &&
 prepare_kernel &&
 configure_kernel &&
 compile_kernel
+
+unlock_script
 
