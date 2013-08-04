@@ -1,56 +1,36 @@
 #!/bin/bash
 
-source ./sprute.conf
+ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-stub () {
-   echo 'UNIMPLEMENTED YET'
-}
+source "${ldir}/lib/common.sh"
+
+
+chroot_path="$1"
+shift
 
 pre_chroot_mount () {
-   mount -t proc none "$CHROOT_PATH/proc" &&
-   mount --rbind /dev "$CHROOT_PATH/dev"  &&
-   mount -t sysfs sys "$CHROOT_PATH/sys" 
+   mount -t proc none "$chroot_path/proc" &&
+   mount --rbind /dev "$chroot_path/dev"  &&
+   mount -t sysfs sys "$chroot_path/sys"
 }
 
 post_chroot_umount () {
-   umount "$CHROOT_PATH/proc"
-   umount "$CHROOT_PATH/sys"
-   umount --lazy "$CHROOT_PATH/dev"
+   umount "$chroot_path/proc"
+   umount "$chroot_path/sys"
+   umount --lazy "$chroot_path/dev"
 }
 
-
-debian_chroot_stap_compilation () {
-   LANG="C.UTF-8" chroot $CHROOT_PATH /bin/bash
-#   LANG="C.UTF-8" chroot "$CHROOT_HOME/sprute" /bin/bash ./compile.sh
-}
-
-setup_compilation_env () {
-   mkdir -p "$CHROOT_HOME/bin/"
-   #upload fakeuname
-   cp -f "$FAKEUNAME" "$CHROOT_HOME/bin/" &&
-   #upload_sprute
-   rsync -ur --exclude '/.git' "$SPRUTE_SRC_DIR" "$CHROOT_HOME/sprute"
-}
-
-get_stap_binaries () {
-   stub
-   #cp
-   #chown work:work -r
+exec_cmd () {
+   LANG="C.UTF-8" chroot "$chroot_path" /bin/bash -c "$@"
 }
 
 run () {
-   setup_compilation_env &&
-
    pre_chroot_mount &&
-   debian_chroot_stap_compilation &&
-   get_stap_binaries
+   exec_cmd "$@" &&
    post_chroot_umount
 }
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
+check_root
 
-run
+run "$@"
 
