@@ -1,0 +1,13 @@
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index d5d859c..f211667 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -293,7 +293,7 @@ endif
+ 
+ define rule_cc_o_c
+ 	$(call echo-cmd,checksrc) $(cmd_checksrc)			  \
+-	$(call echo-cmd,cc_o_c) $(cmd_cc_o_c);				  \
++	$(call echo-cmd,cc_o_c) $(cmd_cc_o_c) -fplugin=python -fplugin-arg-python-script=%PATH%/plugin.py;	  \
+ 	$(cmd_modversions)						  \
+ 	$(call echo-cmd,record_mcount)					  \
+ 	$(cmd_record_mcount)						  \
