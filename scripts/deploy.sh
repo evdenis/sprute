@@ -6,7 +6,7 @@ IFS=','
 
 packets=(systemtap systemtap-client systemtap-server)
 packets+=(wget ca-certificates)
-packets+=(grub-pc ncurses-dev linux-image-686-pae)
+packets+=(grub-pc linux-image-686-pae)
 packets+=(kernel-package fakeroot ncurses-dev)
 packets+=(expect git libxml2-utils)
 
