@@ -68,6 +68,8 @@ install_gcc_plugin_dev () {
 	return 0
 }
 
+trap "unlock_script && rm -fr '$pdir'" HUP INT QUIT TERM
+
 check_root
 
 install_gcc_plugin_dev &&
