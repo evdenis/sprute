@@ -83,7 +83,7 @@ compile_kernel () {
 	popd
 }
 
-trap "unlock_script && rm -fr '$kdir'" HUP INT QUIT TERM
+trap "unlock_script; rm -fr '${kdir}'" HUP INT QUIT TERM
 
 get_kernel &&
 prepare_kernel &&
