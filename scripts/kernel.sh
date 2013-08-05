@@ -19,7 +19,7 @@ get_latest_stable_kernel () {
 
 	if [[ ! ( -f $kfile && -d $kdir ) ]]
 	then
-	   wget -q $link &&
+	   wget -Nq $link &&
    	tar xf $kfile
 	else
 		return 1
@@ -28,21 +28,33 @@ get_latest_stable_kernel () {
 
 get_kernel () {
 	local -i ret
+
    pushd $ldir
 		get_latest_stable_kernel
 		ret=$?
    popd
+
 	return $ret
+}
+
+patch_build_makefile () {
+   local patchfile="${ldir}/data/linux-makefile.patch"
+   sed -e "s:%PATH%:${ldir}/gccplugin/:" "$patchfile" | patch -p1 -d "$kdir"
+}
+
+patch_fs_makefiles_for_gcov () {
+   "${ldir}/gcov/patch_makefiles_for_gcov.sh" "$kdir" "fs"
 }
 
 prepare_kernel () {
 	local -i ret
+
    pushd $ldir
-		#patch 
-		#ret=$?
-		#TODO: implement
-		ret=0
+      patch_build_makefile &&
+      patch_fs_makefiles_for_gcov 
+		ret=$?
    popd
+
 	return $ret
 
 }
@@ -56,8 +68,8 @@ configure_kernel () {
 	pushd $kdir
    	cp $KCONFIG .config
 	   #yes '' | make oldconfig > /dev/null
-   	#make olddefconfig
-	   make silentoldconfig
+	   #make silentoldconfig
+   	make olddefconfig
 		$ldir/makeconfig.exp
 		ret=$?
 	popd
