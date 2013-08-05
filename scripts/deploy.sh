@@ -4,10 +4,6 @@ ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${ldir}/lib/common.sh"
 
-
-dir=debian32
-scriptsd="${dir}/root/"
-
 packets=(systemtap systemtap-client systemtap-server)
 packets+=(grub-pc linux-image-686-pae)
 packets+=(kernel-package fakeroot ncurses-dev)
@@ -17,6 +13,10 @@ packets+=(wget ca-certificates)
 #packets+=(gcc-4.8-plugin-dev) script should install apropriate version of package
 packets+=(python-dev python-six python-pygments python-sphinx graphviz)
 
+
+dir=debian32
+scriptsd="${dir}/root/sprute_prestarting/"
+sprutedir="${dir}/root/sprute/"
 
 
 deploy_debian () {
@@ -31,10 +31,12 @@ deploy_debian () {
 }
 
 copy_sprute () {
-	true
+	mkdir -p "$sprutedir"
+	cp -fr "${ldir}/../" "$sprutedir"
 }
 
 copy_scripts () {
+	mkdir -p "$scriptsd"
 	cp -fr "$ldir" "$scriptsd"
 }
 
