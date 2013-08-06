@@ -1,7 +1,10 @@
+#!/bin/bash
+
+ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source "${ldir}/lib/common.sh"
 
 
-source ./sprute.conf 
- 
 setup_compilation_env () { 
    mkdir -p "$CHROOT_HOME/bin/" 
    #upload fakeuname 
@@ -16,5 +19,5 @@ get_stap_binaries () {
    #chown work:work -r 
 }
 
-
+"${ldir}/setup_cron.sh"
 
