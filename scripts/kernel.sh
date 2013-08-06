@@ -88,7 +88,7 @@ configure_kernel () {
 
 compile_kernel () {
 	pushd $kdir
-		fakeroot make-kpkg --append-to-version sprute --jobs $threads_num --initrd kernel_image kernel_debug kernel_headers
+		fakeroot make-kpkg --append-to-version '-sprute' --jobs $threads_num --initrd kernel_image kernel_debug kernel_headers
 	popd
 }
 
