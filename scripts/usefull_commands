@@ -1,0 +1,35 @@
+
+
+cat > /etc/fstab << _END_
+#                   
+proc            /proc           proc   defaults    0 0
+/dev/hda1       /               $fs_type  noatime,errors=remount-ro,data=writeback 0 1
+/dev/hda2       none            swap    sw               0 0
+/dev/hda3   /srv     $fs_type noatime,data=writeback        0 0
+_END_
+
+/sbin/shadowconfig on
+
+
+
+log "consoles"
+inittemp=$(mktemp)
+cat /etc/inittab | grep -v "^[2-6]:23:respawn" > $inittemp
+mv $inittemp /etc/inittab
+
+
+log "packages"
+/usr/bin/dpkg -P cdebootstrap-helper-diverts
+cd /tmp
+for s in stage? ; do
+    cd $s
+    /usr/bin/dpkg -i *.deb
+    cd ..
+done
+/usr/bin/dpkg --configure -a
+
+apt-get install grub
+grub-install /dev/hda
+update-grub
+
+
