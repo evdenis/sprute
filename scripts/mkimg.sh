@@ -24,7 +24,7 @@ create_raw_img () {
 # TODO: param to spec filsystem on currently hidden part
 # $1 - img name
 partition_img () {
-   file_exists "$1" &&
+   check_file "$1" &&
    parted "$1" -s -- mklabel msdos &&
    parted "$1" -s -- mkpart primary ext2 1MiB 10GiB set 1 boot on &&
    parted "$1" -s -- mkpart primary linux-swap 10GiB 12GiB &&
@@ -36,7 +36,7 @@ loopdev=''
 # $1 - img name
 # $2 - mountpoint
 mount_img () {
-   if ! file_exists "$1"
+   if ! check_file "$1"
    then
       return 1
    fi
@@ -51,8 +51,8 @@ mount_img () {
 # $1 - orig
 # $2 - dest
 copy_root () {
-   dir_exists "$1" &&
-   dir_exists "$2" &&
+   check_dir "$1" &&
+   check_dir "$2" &&
 
    rsync -rpa "${1}/" "$2"
 }
@@ -61,7 +61,7 @@ copy_root () {
 # $2 - mountpoint
 # $3 - mbr file
 install_extlinux () {
-   if [[ -e "$1" ]] && dir_exists "$2" && file_exists "$3"
+   if [[ -e "$1" ]] && check_dir "$2" && check_file "$3"
    then
       #local -i size=$(stat -c '%s' "$3") &&
       #extlinux --install "${2}/boot/" &&
@@ -75,7 +75,7 @@ install_extlinux () {
 
 # $1 - mountpoint
 update_fstab () {
-   if dir_exists "$1"
+   if check_dir "$1"
    then
       local fstab="${1}/etc/fstab"
       grep -qFe '/dev/sda1' "$fstab" || { echo '/dev/sda1 / ext2 defaults 1 1'>> "$fstab";}
@@ -87,7 +87,7 @@ update_fstab () {
 
 # $1 - mountpoint
 setup_root_autologin () {
-   dir_exists "$1" &&
+   check_dir "$1" &&
    sed -i -e 's#1:2345:respawn:/sbin/getty 38400 tty1#& --autologin root#' "${1}/etc/inittab"
 }
 
@@ -95,9 +95,9 @@ setup_root_autologin () {
 # $2 - mountpoint
 # $3 - mbr file
 deploy_system () {
-   dir_exists "$1" &&
-   dir_exists "$2" &&
-   file_exists "$3" &&
+   check_dir "$1" &&
+   check_dir "$2" &&
+   check_file "$3" &&
 
    copy_root "$1" "$2" &&
    update_fstab "$2" &&

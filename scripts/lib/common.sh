@@ -39,11 +39,11 @@ check_root () {
    fi
 }
 
-file_exists () {
+check_file () {
    [[ -f "$1" ]]
 }
 
-dir_exists () {
+check_dir () {
    [[ -d "$1" ]]
 }
 
