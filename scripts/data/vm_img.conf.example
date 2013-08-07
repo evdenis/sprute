@@ -1,0 +1,8 @@
+deploy_dir='./debian32'
+
+mkimg_user="work"
+mkimg_name="test.raw"
+mkimg_size="20G"
+mkimg_system="$deploy_dir"
+mkimg_mountpoint="/mnt/s2e_test_img/"
+
