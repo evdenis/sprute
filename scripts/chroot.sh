@@ -21,7 +21,7 @@ post_chroot_umount () {
 }
 
 exec_cmd () {
-   LANG="C.UTF-8" chroot "$chroot_path" /bin/bash -c "$@"
+   LANG="C.UTF-8" chroot "$chroot_path" /bin/bash -c "$*"
 }
 
 run () {
