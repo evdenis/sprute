@@ -5,7 +5,6 @@ name="test.raw"
 size="20G"
 system="./debian32/"
 mountpoint="/mnt/s2e_test_img/"
-mbr="/usr/share/syslinux/mbr.bin"
 
 ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -59,18 +58,10 @@ copy_root () {
 
 # $1 - device
 # $2 - mountpoint
-# $3 - mbr file
 install_extlinux () {
-   if [[ -e "$1" ]] && check_dir "$2" && check_file "$3"
-   then
-      #local -i size=$(stat -c '%s' "$3") &&
-      #extlinux --install "${2}/boot/" &&
-      #dd bs=$size conv=notrunc count=1 if="$3" of="$1" &&
+   [[ -e "$1" ]] && check_dir "$2" &&
 
-      "${ldir}/chroot.sh" "$2" extlinux-install "$1" \&\& extlinux-update
-   else
-      return 1
-   fi
+   "${ldir}/chroot.sh" "$2" extlinux-install "$1" \&\& extlinux-update
 }
 
 # $1 - mountpoint
@@ -93,16 +84,14 @@ setup_root_autologin () {
 
 # $1 - bootstrap 
 # $2 - mountpoint
-# $3 - mbr file
 deploy_system () {
    check_dir "$1" &&
    check_dir "$2" &&
-   check_file "$3" &&
 
    copy_root "$1" "$2" &&
    update_fstab "$2" &&
    setup_root_autologin "$2" &&
-   install_extlinux "$loopdev" "$2" "$3"
+   install_extlinux "$loopdev" "$2"
 }
 
 umount_img () {
@@ -116,6 +105,6 @@ create_raw_img "$name" "$size" &&
 partition_img  "$name" &&
 mount_img "$name" "$mountpoint" &&
 trap "umount_img" HUP INT QUIT TERM &&
-deploy_system "$system" "$mountpoint" "$mbr"
+deploy_system "$system" "$mountpoint"
 umount_img
 
