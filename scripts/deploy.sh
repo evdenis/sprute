@@ -5,7 +5,7 @@ ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${ldir}/lib/common.sh"
 
 packets=(systemtap systemtap-client systemtap-server)
-packets+=(grub-pc linux-image-686-pae)
+packets+=(extlinux linux-image-686-pae)
 packets+=(kernel-package fakeroot libncurses5-dev)
 packets+=(expect git libxml2-utils cron)
 packets+=(wget ca-certificates)
