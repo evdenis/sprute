@@ -11,6 +11,7 @@ then
 	ldir="$( cd "$( dirname "$0" )" && pwd )"
 fi
 
+
 lock () {
    dotlockfile -l -r 0 -p "$1"
 }
@@ -45,5 +46,30 @@ check_file () {
 
 check_dir () {
    [[ -d "$1" ]]
+}
+
+load_config () {
+   if check_file "$1"
+   then
+      local scriptname="$(basename $0)"
+      scriptname="${scriptname%.sh}"
+      local list=$(grep -o -e "^${scriptname}_[^=]*" "$1" | uniq)
+      local line=''
+      local regexp=''
+
+      for i in $list
+      do
+         regexp+=" $i ${i#${scriptname}_}"
+      done
+
+      eval $(replace $regexp -- < $1)
+   else
+      return 1
+   fi
+}
+
+load_default_config () {
+   local default_conf_path="${ldir}/data/vm_img.conf"
+   load_config "$default_conf_path"
 }
 

@@ -1,15 +1,10 @@
 #!/bin/bash -x
 
-user="work"
-name="test.raw"
-size="20G"
-system="./debian32/"
-mountpoint="/mnt/s2e_test_img/"
-
 ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${ldir}/lib/common.sh"
 
+load_default_config || exit 1
 
 # we can use partx to notify kernel about new partition on loop device
 
