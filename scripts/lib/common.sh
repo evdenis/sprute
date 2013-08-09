@@ -73,3 +73,8 @@ load_default_config () {
    load_config "$default_conf_path"
 }
 
+# function may be called only with root privilegies
+in_chroot () {
+   [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]
+}
+
