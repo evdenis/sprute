@@ -96,9 +96,31 @@ umount_img () {
 
 # $1 - system
 update_bootstrap () {
-   check_dir "$1" &&
+   if [[ $should_upgrade_bootstrap == 'y' ]]
+   then
+      check_dir "$1" &&
+      "${ldir}/chroot.sh" "$1" apt-get update \&\& apt-get --assume-yes --force-yes upgrade \&\& apt-get clean
+   fi
+}
 
-   "${ldir}/chroot.sh" "$1" apt-get update \&\& apt-get --assume-yes --force-yes upgrade \&\& apt-get clean
+install_sprute () {
+   if [[ $copy_sprute_sources == 'y' ]]
+   then
+      "${ldir}/copy.sh"
+   fi
+   if [[ $install_sprute_binaries == 'y' ]] && check_dir "$sprute_binaries_dir"
+   then
+      #TODO: implement
+      true
+   fi
+}
+
+install_kernel () {
+   if [[ -n "$kernel_install" ]] && check_dir "$kernel_dir" 
+   then
+      #TODO: implement
+      true
+   fi
 }
 
 check_root
@@ -109,6 +131,9 @@ create_raw_img "$name" "$size" &&
 partition_img  "$name" &&
 mount_img "$name" "$mountpoint" &&
 trap "umount_img" HUP INT QUIT TERM &&
-deploy_system "$system" "$mountpoint"
+deploy_system "$system" "$mountpoint" &&
+install_sprute &&
+install_kernel
+
 umount_img
 
