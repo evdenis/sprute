@@ -92,12 +92,34 @@ compile_kernel () {
 	popd
 }
 
+install_kernel () {
+   pushd $HOME
+      if [[ $should_install == 'y' ]]
+      then
+         if check_root_noexit
+         then
+            eval $(head -n 4 "${kdir}/Makefile" | tr -d ' ' | tr '[:upper:]' '[:lower:]' | sed -e 's/^/local kernel_/' -e 's/[[:blank:]]*$/;/')
+            local kversion_str="${kernel_version}.${kernel_patchlevel}.${kernel_sublevel}${kernel_extraversion}"
+
+            dpkg -i linux-{headers,image}-"${kversion_str}"*.Custom_i386.deb
+            if ! in_chroot
+            then
+               reboot
+            fi
+         else
+            echo "Can't install kernel without root privileges."
+         fi
+      fi
+   popd
+}
+
 trap "unlock_script; rm -fr '${kdir}'" HUP INT QUIT TERM
 
 get_kernel &&
 prepare_kernel &&
 configure_kernel &&
-compile_kernel
+compile_kernel &&
+install_kernel
 
 unlock_script
 
