@@ -94,7 +94,16 @@ umount_img () {
    losetup -d "$loopdev"
 }
 
+# $1 - system
+update_bootstrap () {
+   check_dir "$1" &&
+
+   "${ldir}/chroot.sh" "$1" apt-get update \&\& apt-get --assume-yes --force-yes upgrade \&\& apt-get clean
+}
+
 check_root
+
+update_bootstrap "$system"
 
 create_raw_img "$name" "$size" &&
 partition_img  "$name" &&
