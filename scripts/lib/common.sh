@@ -32,8 +32,12 @@ unlock_script () {
 }
 
 
+check_root_noexit () {
+   [[ $EUID -ne 0 ]]
+}
+
 check_root () {
-   if [[ $EUID -ne 0 ]]
+   if check_root_noexit
    then
       echo "This script must be run as root" 1>&2
       exit 1
