@@ -66,7 +66,7 @@ load_config () {
          regexp+=" $i ${i#${scriptname}_}"
       done
 
-      eval $(replace $regexp -- < $1)
+      source <(replace $regexp -- < "$1")
    else
       return 1
    fi
