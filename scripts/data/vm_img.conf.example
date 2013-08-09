@@ -6,5 +6,19 @@ mkimg_size='20G'
 mkimg_system="$deploy_dir"
 mkimg_mountpoint='/mnt/s2e_test_img/'
 
+mkimg_should_upgrade_bootstrap='y'
+
+mkimg_copy_sprute_sources='y'
+#TODO: implement
+mkimg_install_sprute_binaries='n'
+mkimg_sprute_binaries_dir=''
+
+#TODO: implement
+mkimg_kernel_install='latest'
+mkimg_kernel_dir=''
+
 kernel_should_install='y'
+
+copy_scripts_dir="${mkimg_mountpoint}/root/sprute_prestarting/"
+copy_sprute_dir="${mkimg_mountpoint}/root/sprute/"
 
