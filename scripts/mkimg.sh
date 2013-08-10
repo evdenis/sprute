@@ -112,6 +112,36 @@ update_bootstrap () {
    fi
 }
 
+#FIXME: doesn't work yet. Don't know why.
+# $1 - mountpoint
+# $2 - user
+# $3 - path to keys for vm
+# $4 - path to host pub key
+install_ssh_keys () {
+   #TODO: maybe pub key is unnecessary
+   if check_file "$3" && check_file "${3}.pub"
+   then
+      check_dir "$1" &&
+      check_user_chroot "$1" "$2" &&
+      {
+         local user_home="$1"
+         if [[ "$2" == 'root' ]]
+         then
+            user_home+='/root/'
+         else
+            user_home+="/home/${2}"
+         fi
+
+         local -i user_id=$(grep -e "^${2}" "${1}/etc/group" | cut -d ':' -f 3) &&
+
+            mkdir --mode=700 "${user_home}/.ssh/" &&
+            cp -fv "$3" "${3}.pub" "${user_home}/.ssh/" &&  
+            if check_file "$4"; then cat "$4" >> "${user_home}/.ssh/authorized_keys"; fi  &&
+            chown -R ${user_id}:${user_id} "${user_home}/.ssh/"
+      }
+   fi
+}
+
 install_sprute () {
    if [[ $copy_sprute_sources == 'y' ]]
    then
@@ -142,6 +172,7 @@ mount_img "$name" "$mountpoint" &&
 trap "umount_img" HUP INT QUIT TERM &&
 deploy_system "$system" "$mountpoint" &&
 setup_autologin "$mountpoint" root &&
+install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key"
 install_sprute &&
 install_kernel
 
