@@ -27,7 +27,7 @@ exec_cmd () {
 run () {
    pre_chroot_mount &&
    trap post_chroot_umount HUP INT QUIT TERM
-   exec_cmd "$@" &&
+   exec_cmd "$@"
    post_chroot_umount
 }
 
