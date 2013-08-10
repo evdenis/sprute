@@ -72,9 +72,19 @@ update_fstab () {
 }
 
 # $1 - mountpoint
-setup_root_autologin () {
+# $2 - user
+check_user_chroot () {
    check_dir "$1" &&
-   sed -i -e 's#1:2345:respawn:/sbin/getty 38400 tty1#& --autologin root#' "${1}/etc/inittab"
+   grep -qe "^${2}" "${1}/etc/passwd"
+}
+
+# $1 - mountpoint
+# $2 - user
+setup_autologin () {
+   check_dir "$1" &&
+   #"${ldir}/chroot.sh" id -u "$2" &&
+   check_user_chroot "$1" "$2" &&
+   sed -i -e "s#1:2345:respawn:/sbin/getty 38400 tty1#& --autologin ${2}#" "${1}/etc/inittab"
 }
 
 # $1 - bootstrap 
@@ -85,7 +95,6 @@ deploy_system () {
 
    copy_root "$1" "$2" &&
    update_fstab "$2" &&
-   setup_root_autologin "$2" &&
    install_extlinux "$loopdev" "$2"
 }
 
@@ -132,6 +141,7 @@ partition_img  "$name" &&
 mount_img "$name" "$mountpoint" &&
 trap "umount_img" HUP INT QUIT TERM &&
 deploy_system "$system" "$mountpoint" &&
+setup_autologin "$mountpoint" root &&
 install_sprute &&
 install_kernel
 
