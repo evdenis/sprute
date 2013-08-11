@@ -4,22 +4,23 @@ ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${ldir}/lib/common.sh"
 
-load_default_config || exit 1
-
 vm_type='test'
 
 if [[ -n "$1" ]]
 then
    case "$1" in
       t|test)
-         vm_type='test'
+         vm_type='test';;
       w|work)
-         vm_type='work'
+         vm_type='work';;
       *)
-         echo "Unknown type: ${1}" 2>&1
-         exit 1
+         echo "Unknown type: ${1}" 2>&1;
+         exit 1;;
    esac
 fi
+
+load_default_config || exit 1
+
 
 # we can use partx to notify kernel about new partition on loop device
 
