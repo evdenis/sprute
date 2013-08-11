@@ -151,7 +151,8 @@ install_ssh_keys () {
          local -i user_id=$(grep -e "^${2}" "${1}/etc/group" | cut -d ':' -f 3) &&
 
          mkdir --mode=700 "${user_home}/.ssh/" &&
-         cp -fv "$3" "${3}.pub" "${user_home}/.ssh/" &&
+         cp -fv "$3" "${user_home}/.ssh/id_rsa" &&
+         cp -fv "${3}.pub" "${user_home}/.ssh/id_rsa.pub" &&
          if check_file "$4"; then cat "$4" >> "${user_home}/.ssh/authorized_keys"; fi  &&
          chown -R ${user_id}:${user_id} "${user_home}/.ssh/"
       }
