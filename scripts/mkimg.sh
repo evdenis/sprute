@@ -80,8 +80,15 @@ update_fstab () {
    if check_dir "$1"
    then
       local fstab="${1}/etc/fstab"
-      grep -qFe '/dev/sda1' "$fstab" || { echo '/dev/sda1 / ext2 defaults 1 1'>> "$fstab";}
-      grep -qFe '/dev/sda2' "$fstab" || { echo '/dev/sda2 swap swap defaults 0 0'>> "$fstab";}
+      grep -qFe '/dev/sda1' "$fstab" || { echo '/dev/sda1 / ext2 defaults 1 1' >> "$fstab"; }
+      grep -qFe '/dev/sda2' "$fstab" || { echo '/dev/sda2 swap swap defaults 0 0' >> "$fstab"; }
+      if [[ -n "$shared_folder_tag" ]]
+      then
+         grep -qFe "$shared_folder_tag" "$fstab" || {
+            mkdir -p $shared_folder;
+            echo "${shared_folder_tag} /root/shared 9p trans=virtio 0 0" >> "$fstab";
+         }
+      fi
    else
       return 1
    fi
@@ -192,6 +199,13 @@ setup_autologin "$mountpoint" root &&
 install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key"
 install_sprute &&
 install_kernel
+
+#if [[ $vm_type == 'test' ]]
+#then
+#   setup_shared_folder
+#   setup_inotify
+#   modify_bashrs
+#fi
 
 umount_img
 
