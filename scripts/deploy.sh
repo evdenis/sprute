@@ -21,7 +21,8 @@ deploy_debian () {
 
 	IFS=','
 	mkdir -p "$dir"
-	debootstrap --arch=i386 --include="${packets[*]}"  --variant=buildd sid "$dir"
+#	debootstrap --arch=i386 --include="${packets[*]}"  --variant=buildd sid "$dir"
+	debootstrap --arch=i386 --include="${packets[*]}" sid "$dir"
 	ret=$?
 	unset IFS
 	return $ret
