@@ -149,7 +149,6 @@ update_bootstrap () {
    fi
 }
 
-#FIXME: doesn't work yet. Don't know why.
 # $1 - mountpoint
 # $2 - user
 # $3 - path to keys for vm
@@ -171,7 +170,7 @@ install_ssh_keys () {
 
          local -i user_id=$(grep -e "^${2}" "${1}/etc/group" | cut -d ':' -f 3) &&
 
-         mkdir --mode=700 "${user_home}/.ssh/" &&
+         mkdir -p --mode=700 "${user_home}/.ssh/" &&
          cp -fv "$3" "${user_home}/.ssh/id_rsa" &&
          cp -fv "${3}.pub" "${user_home}/.ssh/id_rsa.pub" &&
          if check_file "$4"; then cat "$4" >> "${user_home}/.ssh/authorized_keys"; fi  &&
@@ -210,7 +209,7 @@ mount_img "$name" "$mountpoint" &&
 trap "umount_img" HUP INT QUIT TERM &&
 deploy_system "$system" "$mountpoint" &&
 setup_autologin "$mountpoint" root &&
-install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key"
+install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key" &&
 install_sprute &&
 install_kernel
 
