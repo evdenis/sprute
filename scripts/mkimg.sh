@@ -110,6 +110,19 @@ setup_autologin () {
    sed -i -e "s#1:2345:respawn:/sbin/getty 38400 tty1#& --autologin ${2}#" "${1}/etc/inittab"
 }
 
+# $1 - mountpoint
+setup_network () {
+   check_dir "$1" &&
+cat > "${1}/etc/network/interfaces" << EOF
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+EOF
+}
+
+
 # $1 - bootstrap 
 # $2 - mountpoint
 deploy_system () {
@@ -118,6 +131,7 @@ deploy_system () {
 
    copy_root "$1" "$2" &&
    update_fstab "$2" &&
+   setup_network "$2" &&
    install_extlinux "$loopdev" "$2"
 }
 
