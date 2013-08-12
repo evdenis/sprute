@@ -86,7 +86,7 @@ update_fstab () {
       then
          grep -qFe "$shared_folder_tag" "$fstab" || {
             mkdir -p $shared_folder;
-            echo "${shared_folder_tag} /root/shared 9p trans=virtio 0 0" >> "$fstab";
+            echo "${shared_folder_tag} ${shared_folder} 9p trans=virtio,noauto 0 0" >> "$fstab";
          }
       fi
    else
