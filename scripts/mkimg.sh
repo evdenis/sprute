@@ -183,10 +183,32 @@ install_ssh_keys () {
    fi
 }
 
+copy_sprute () {
+   local -i ret
+   mkdir -p "$vm_sprute_dir"
+   pushd "${ldir}/../"
+      # --exclude='scripts/' doesn't work
+      rsync -vRau $(git ls-tree -r HEAD --name-only . | grep -vFe 'scripts/') "$vm_sprute_dir"
+      ret=$?
+   popd
+   return $ret
+}
+
+copy_scripts () {
+   local -i ret
+   mkdir -p "$vm_scripts_dir"
+   pushd "$ldir"
+      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "$vm_scripts_dir"
+      ret=$?
+   popd
+   return $ret
+}
+
 install_sprute () {
    if [[ $copy_sprute_sources == 'y' ]]
    then
-      "${ldir}/copy.sh"
+      copy_scripts &&
+      copy_sprute
    fi
    if [[ $install_sprute_binaries == 'y' ]] && check_dir "$sprute_binaries_dir"
    then

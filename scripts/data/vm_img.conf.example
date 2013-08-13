@@ -9,6 +9,9 @@ mkimg_mountpoint='/mnt/s2e_test_img/'
 mkimg_should_upgrade_bootstrap='y'
 
 mkimg_copy_sprute_sources='y'
+mkimg_vm_scripts_dir="${mountpoint}/root/sprute_prestarting/"
+mkimg_vm_sprute_dir="${mountpoint}/root/sprute/"
+
 #TODO: implement
 mkimg_install_sprute_binaries='n'
 mkimg_sprute_binaries_dir=''
@@ -26,6 +29,4 @@ mkimg_shared_folder="/root/shared"
 
 kernel_should_install='y'
 
-copy_scripts_dir="${mkimg_mountpoint}/root/sprute_prestarting/"
-copy_sprute_dir="${mkimg_mountpoint}/root/sprute/"
 
