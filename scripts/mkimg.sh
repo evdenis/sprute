@@ -129,7 +129,7 @@ EOF
 # $1 - mountpoint
 # $2 - scripts dir
 setup_cron () {
-   if check_dir "$1" && check_dir "$2"
+   if check_dir "${1}/${2}"
    then
       local crontab="${1}/etc/crontab"
 
@@ -150,7 +150,7 @@ deploy_system () {
    copy_root "$1" "$2" &&
    update_fstab "$2"   &&
    setup_network "$2"  &&
-   { if [[ "$vm_type" == 'work' ]] then; setup_cron "$2" "$vm_scripts_dir" fi; } &&
+   { if [[ "$vm_type" == 'work' ]]; then setup_cron "$2" "$vm_scripts_dir"; fi; } &&
    install_extlinux "$loopdev" "$2"
 }
 
@@ -200,10 +200,10 @@ install_ssh_keys () {
 
 copy_sprute () {
    local -i ret
-   mkdir -p "$vm_sprute_dir"
+   mkdir -p "${mountpoint}/${vm_sprute_dir}"
    pushd "${ldir}/../"
       # --exclude='scripts/' doesn't work
-      rsync -vRau $(git ls-tree -r HEAD --name-only . | grep -vFe 'scripts/') "$vm_sprute_dir"
+      rsync -vRau $(git ls-tree -r HEAD --name-only . | grep -vFe 'scripts/') "${mountpoint}/${vm_sprute_dir}"
       ret=$?
    popd
    return $ret
@@ -211,9 +211,9 @@ copy_sprute () {
 
 copy_scripts () {
    local -i ret
-   mkdir -p "$vm_scripts_dir"
+   mkdir -p "${mountpoint}/${vm_scripts_dir}"
    pushd "$ldir"
-      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "$vm_scripts_dir"
+      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${mountpoint}/${vm_scripts_dir}"
       ret=$?
    popd
    return $ret
