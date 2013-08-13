@@ -6,9 +6,6 @@ source "${ldir}/lib/common.sh"
 
 load_default_config || exit 1
 
-
-git ls-tree -r HEAD --name-only .
-
 copy_sprute () {
    mkdir -p "$sprute_dir"
    pushd "${ldir}/../"
