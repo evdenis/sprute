@@ -21,7 +21,7 @@ unlock () {
 }
 
 
-lockname="${ldir}/${0}.lock"
+lockname="${ldir}/$(basename ${0}).lock"
 
 lock_script () {
 	lock "$lockname" || exit 0

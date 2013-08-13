@@ -113,8 +113,21 @@ install_kernel () {
    popd
 }
 
+check_command () {
+   command -v "$1" > /dev/null 2>&1
+}
+
+gcc_python_plugin_setup () {
+   if ! check_command "gcc-with-python"
+   then
+     "${ldir}/gccpython.sh"
+   fi
+}
+
+
 trap "unlock_script; rm -fr '${kdir}'" HUP INT QUIT TERM
 
+gcc_python_plugin_setup &&
 get_kernel &&
 prepare_kernel &&
 configure_kernel &&
