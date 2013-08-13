@@ -209,20 +209,36 @@ copy_sprute () {
    return $ret
 }
 
-copy_scripts () {
+#copy_scripts () {
+#   local -i ret
+#   mkdir -p "${mountpoint}/${vm_scripts_dir}"
+#   pushd "$ldir"
+#      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${mountpoint}/${vm_scripts_dir}"
+#      ret=$?
+#   popd
+#   return $ret
+#}
+
+#FIXME: dirty hack
+copy_scripts_sharedfolder_host () {
    local -i ret
-   mkdir -p "${mountpoint}/${vm_scripts_dir}"
+   mkdir -p "${run_shared_host_shared_folder}"
    pushd "$ldir"
-      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${mountpoint}/${vm_scripts_dir}"
+      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${run_shared_host_shared_folder}"
       ret=$?
    popd
    return $ret
 }
 
+
 install_sprute () {
    if [[ $copy_sprute_sources == 'y' ]]
    then
-      copy_scripts &&
+      if [[ "$vm_type" == 'work' ]]
+      then
+         copy_scripts_sharedfolder_host
+         mkdir -p "${mountpoint}/${shared_folder}/"
+      fi
       copy_sprute
    fi
    if [[ $install_sprute_binaries == 'y' ]] && check_dir "$sprute_binaries_dir"
