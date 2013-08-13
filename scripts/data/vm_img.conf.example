@@ -27,6 +27,8 @@ mkimg_host_ssh_pub_key=''
 mkimg_shared_folder_tag="$([[ -n $vm_type && $vm_type == 'work' ]] && echo "binaries" || echo '')"
 mkimg_shared_folder="/root/shared"
 
+run_shared_host_shared_folder="/home/${mkimg_user}/Dropbox/shared/"
+
 kernel_should_install='y'
 
 
