@@ -126,6 +126,20 @@ EOF
    fi
 }
 
+# $1 - mountpoint
+# $2 - scripts dir
+setup_cron () {
+   if check_dir "$1" && check_dir "$2"
+   then
+      local crontab="${1}/etc/crontab"
+
+      grep -qFe "kernel.sh"    "$crontab" || { echo "0 * * * * root ${2}/kernel.sh" >> "$crontab"; }
+      #grep -qFe "gccpython.sh" "$crontab" || { echo "0 0 */7 * * root ${2}/gccpython.sh" >> "$crontab"; }
+   else
+      return 1
+   fi
+}
+
 
 # $1 - bootstrap 
 # $2 - mountpoint
@@ -134,8 +148,9 @@ deploy_system () {
    check_dir "$2" &&
 
    copy_root "$1" "$2" &&
-   update_fstab "$2" &&
-   setup_network "$2" &&
+   update_fstab "$2"   &&
+   setup_network "$2"  &&
+   { if [[ "$vm_type" == 'work' ]] then; setup_cron "$2" "$vm_scripts_dir" fi; } &&
    install_extlinux "$loopdev" "$2"
 }
 
