@@ -85,7 +85,7 @@ update_fstab () {
       if [[ -n "$shared_folder_tag" ]]
       then
          grep -qFe "$shared_folder_tag" "$fstab" || {
-            mkdir -p $shared_folder;
+            mkdir -p "${1}/${shared_folder}/";
             echo "${shared_folder_tag} ${shared_folder} 9p trans=virtio,noauto 0 0" >> "$fstab";
          }
       fi
@@ -120,6 +120,10 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet dhcp
 EOF
+   if [[ -n $shared_folder_tag ]]
+   then
+      echo "post-up mount ${shared_folder_tag}" >> "${1}/etc/network/interfaces"
+   fi
 }
 
 
