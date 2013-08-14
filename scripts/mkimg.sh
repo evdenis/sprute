@@ -150,7 +150,6 @@ deploy_system () {
    copy_root "$1" "$2" &&
    update_fstab "$2"   &&
    setup_network "$2"  &&
-   { if [[ "$vm_type" == 'work' ]]; then setup_cron "$2" "$vm_scripts_dir"; fi; } &&
    install_extlinux "$loopdev" "$2"
 }
 
@@ -210,26 +209,26 @@ copy_sprute () {
    return $ret
 }
 
-#copy_scripts () {
-#   local -i ret
-#   mkdir -p "${mountpoint}/${vm_scripts_dir}"
-#   pushd "$ldir"
-#      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${mountpoint}/${vm_scripts_dir}"
-#      ret=$?
-#   popd
-#   return $ret
-#}
-
-#FIXME: dirty hack
-copy_scripts_sharedfolder_host () {
+copy_scripts () {
    local -i ret
-   mkdir -p "${run_shared_host_shared_folder}"
+   mkdir -p "${mountpoint}/${vm_scripts_dir}"
    pushd "$ldir"
-      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${run_shared_host_shared_folder}"
+      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${mountpoint}/${vm_scripts_dir}"
       ret=$?
    popd
    return $ret
 }
+
+#FIXME: dirty hack
+#copy_scripts_sharedfolder_host () {
+#   local -i ret
+#   mkdir -p "${run_shared_host_shared_folder}"
+#   pushd "$ldir"
+#      rsync -vRau $(git ls-tree -r HEAD --name-only .) "./data/vm_img.conf" "${run_shared_host_shared_folder}"
+#      ret=$?
+#   popd
+#   return $ret
+#}
 
 
 install_sprute () {
@@ -237,7 +236,8 @@ install_sprute () {
    then
       if [[ "$vm_type" == 'work' ]]
       then
-         copy_scripts_sharedfolder_host
+#        copy_scripts_sharedfolder_host
+         copy_scripts
          mkdir -p "${mountpoint}/${shared_folder}/"
       fi
       copy_sprute
@@ -269,6 +269,7 @@ deploy_system "$system" "$mountpoint" &&
 setup_autologin "$mountpoint" root &&
 install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key" &&
 install_sprute &&
+{ if [[ "$vm_type" == 'work' ]]; then setup_cron "$mountpoint" "$vm_scripts_dir"; fi; } &&
 install_kernel
 
 #if [[ $vm_type == 'test' ]]
