@@ -66,7 +66,9 @@ load_config () {
          regexp+=" $i ${i#${scriptname}_}"
       done
 
-      source <(replace $regexp -- < "$1")
+      # We should not use replace
+      source <(sed -e "$(echo $regexp | sed -e 's/\([[:alnum:]_]\+\)[[:blank:]]\+\([[:alnum:]_]\+\)/s%\1%\2%g;/g')" "$1")
+#      source <(replace $regexp -- < "$1")
    else
       return 1
    fi
