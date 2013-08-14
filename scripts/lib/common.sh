@@ -4,11 +4,11 @@ declare -i threads_num=$(( $processors_num * ${PR_COEFF:-1} ))
 [[ $threads_num -eq 0 ]] && threads_num=1
 
 
-if [[ -d "$ldir" ]]
+if [[ ! -d "$ldir" ]]
 then
 	#dir of calling script
 	#note the difference between $0 and ${BASH_SOURCE[0]}
-	ldir="$( cd "$( dirname "$0" )" && pwd )"
+	ldir="$( cd "$( dirname "$0" )" && pwd )/../"
 fi
 
 
