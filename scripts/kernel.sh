@@ -4,6 +4,8 @@ ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "${ldir}/lib/common.sh"
 
+load_default_config || exit 1
+
 lock_script
 
 kdir=''
