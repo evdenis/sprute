@@ -41,7 +41,7 @@ patch_build_makefile () {
 	local -i ret
    local patchfile="${ldir}/data/linux-makefile.patch"
 
-   sed -e "s:%PATH%:${ldir}/gccplugin/:" "$patchfile" | patch -p1 -d "$kdir"
+   sed -e "s:%PATH%:${mkimg_vm_sprute_dir}/gccplugin/:" "$patchfile" | patch -p1 -d "$kdir"
 	ret=$?
 
 	if [[ $ret -ne 0 ]]
