@@ -156,6 +156,7 @@ deploy_system () {
 
 umount_img () {
    umount "${loopdev}p1"
+   sleep 3s
    losetup -d "$loopdev"
 }
 
