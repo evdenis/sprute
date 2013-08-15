@@ -84,3 +84,18 @@ in_chroot () {
    [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]
 }
 
+# $1 - dir
+get_kernels_list () {
+   check_dir "$1" &&
+   {
+      pushd "$1" > /dev/null 2>&1
+      ls -1 vmlinuz-* | grep -v .dpkg-tmp | sort -nr
+      popd > /dev/null 2>&1
+   }
+}
+
+# $1 - dir
+find_latest_kernel () {
+   get_kernels_list "$1" | head -n 1
+}
+
