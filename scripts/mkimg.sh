@@ -76,12 +76,59 @@ copy_root () {
    rsync -rpa "${1}/" "$2"
 }
 
+# $1 - root dir
+generate_extlinux_config () {
+   if ! check_dir "$1"
+   then
+      return 1
+   fi
+   local -i number=0
+   local version=''
+   local config="
+default l0
+timeout 3
+
+"
+
+   for i in $(get_kernels_list "${1}/boot")
+   do
+      version="$(echo "$i" | sed -e 's/vmlinuz-//g')"
+
+	   if [[ -e "${1}/boot/initrd.img-${version}" ]]
+   	then
+	   	initrd="initrd=/boot/initrd.img-${version}"
+   	else
+	   	initrd=""
+   	fi
+
+	   # Writing default entry
+   	config="${config}
+
+label l${number}
+	menu label Debian GNU/Linux, kernel ${version}
+	linux /boot/vmlinuz-${version}
+	append ${initrd} root=/dev/sda1 ro"
+
+   	number="$((${number} + 1))"
+   done
+   echo "${config}"
+}
+
 # $1 - device
 # $2 - mountpoint
 install_extlinux () {
-   [[ -e "$1" ]] && check_dir "$2" &&
+   local mbrfile='/usr/share/syslinux/mbr.bin'
 
-   "${ldir}/chroot.sh" "$2" extlinux-install "$1" \&\& extlinux-update
+   [[ -e "$1" ]] && check_dir "$2" &&
+   {
+      local -i size=$(stat -c '%s' "$mbrfile") &&
+      dd bs=$size conv=notrunc count=1 if="$mbrfile" of="$1" &&
+      mkdir -p "${2}/boot/extlinux" &&
+      extlinux --install "${2}/boot/extlinux" &&
+      generate_extlinux_config "$2" > "${2}/boot/extlinux/extlinux.conf"
+   }
+
+   #"${ldir}/chroot.sh" "$2" extlinux-install "$1" \&\& extlinux-update
 }
 
 # $1 - mountpoint
