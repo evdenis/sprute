@@ -98,7 +98,7 @@ install_kernel () {
    pushd $HOME
       if [[ $should_install == 'y' ]]
       then
-         if check_root_noexit
+         if ! check_root_noexit
          then
             eval $(head -n 4 "${kdir}/Makefile" | tr -d ' ' | tr '[:upper:]' '[:lower:]' | sed -e 's/^/local kernel_/' -e 's/[[:blank:]]*$/;/')
             local kversion_str="${kernel_version}.${kernel_patchlevel}.${kernel_sublevel}${kernel_extraversion}"
