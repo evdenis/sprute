@@ -36,9 +36,18 @@ create_raw_img () {
 partition_img () {
    check_file "$1" &&
    parted "$1" -s -- mklabel msdos &&
-   parted "$1" -s -- mkpart primary ext2 1MiB 10GiB set 1 boot on &&
-   parted "$1" -s -- mkpart primary linux-swap 10GiB 12GiB &&
-   parted "$1" -s -- mkpart primary 12GiB -1 set 3 hidden on
+   {
+      if [[ "$vm_type" == 'work' ]]
+      then
+         parted "$1" -s -- mkpart primary ext2 1MiB -1GiB set 1 boot on &&
+         parted "$1" -s -- mkpart primary linux-swap -1GiB -1MiB
+      elif [[ "$vm_type" == 'test' ]]
+      then
+         parted "$1" -s -- mkpart primary ext2 1MiB 20GiB set 1 boot on &&
+         parted "$1" -s -- mkpart primary linux-swap 20GiB 21GiB &&
+         parted "$1" -s -- mkpart primary 21GiB -1MiB set 3 hidden on
+      fi
+   }
 }
 
 
