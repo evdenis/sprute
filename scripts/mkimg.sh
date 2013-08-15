@@ -154,8 +154,10 @@ deploy_system () {
 }
 
 umount_img () {
+   sync
    umount "${loopdev}p1"
    sleep 3s
+   sync
    losetup -d "$loopdev"
 }
 
