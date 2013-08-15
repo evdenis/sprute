@@ -72,8 +72,7 @@ prepare_kernel () {
 
 configure_kernel () {
 	# latest(by installation time, not by version) available kernel config file;
-   # FIXME: by version
-  	local KCONFIG=$(ls -1 -t /boot/config-* | head -n 1)
+  	local KCONFIG=$(ls -1 /boot/config-* | sort -nr | head -n 1)
 	local -i ret
 
 	pushd $kdir
