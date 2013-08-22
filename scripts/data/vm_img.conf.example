@@ -17,10 +17,6 @@ mkimg_vm_sprute_dir="/root/sprute/"
 mkimg_install_sprute_binaries='n'
 mkimg_sprute_binaries_dir=''
 
-#TODO: implement
-mkimg_kernel_install='latest'
-mkimg_kernel_dir=''
-
 #pub keys should be in the same directory
 mkimg_vm_ssh_key=''
 mkimg_host_ssh_pub_key=''
@@ -30,6 +26,7 @@ mkimg_shared_folder="/root/shared"
 
 run_shared_host_shared_folder="/home/${mkimg_user}/Dropbox/shared/"
 
-kernel_should_install='y'
+mkimg_kernel_install='3.10.4'
+mkimg_kernel_packet_dir="/home/${user}/Dropbox/shared/kernels/"
 
 

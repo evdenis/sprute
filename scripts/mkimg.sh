@@ -205,8 +205,7 @@ deploy_system () {
 
    copy_root "$1" "$2" &&
    update_fstab "$2"   &&
-   setup_network "$2"  &&
-   install_extlinux "$loopdev" "$2"
+   setup_network "$2"
 }
 
 umount_img () {
@@ -308,10 +307,12 @@ install_sprute () {
 }
 
 install_kernel () {
-   if [[ -n "$kernel_install" ]] && check_dir "$kernel_dir" 
+   if [[ -n "$kernel_install" ]] && check_dir "$kernel_packet_dir"
    then
-      #TODO: implement
-      true
+		mkdir -p "$mountpoint/tmp/packets"
+		cp -fv "${kernel_packet_dir}/"*"$kernel_install"*.deb "${mountpoint}/tmp/packets"
+		chroot "$mountpoint" bash -c "cd /tmp/packets/; dpkg -i *.deb"
+		rm -fr "$mountpoint/tmp/packets"
    fi
 }
 
@@ -328,7 +329,8 @@ setup_autologin "$mountpoint" root &&
 install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key" &&
 install_sprute &&
 { if [[ "$vm_type" == 'work' ]]; then setup_cron "$mountpoint" "$vm_scripts_dir"; fi; } &&
-install_kernel
+install_kernel &&
+install_extlinux "$loopdev" "$mountpoint"
 
 #if [[ $vm_type == 'test' ]]
 #then
