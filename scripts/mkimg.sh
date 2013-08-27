@@ -221,6 +221,7 @@ update_bootstrap () {
    if [[ $should_upgrade_bootstrap == 'y' ]]
    then
       check_dir "$1" &&
+      # Use carefully because of Fedora bug.
       "${ldir}/chroot.sh" "$1" apt-get update \&\& apt-get --assume-yes --force-yes upgrade \&\& apt-get clean
    fi
 }
@@ -311,6 +312,7 @@ install_kernel () {
    then
 		mkdir -p "$mountpoint/tmp/packets"
 		cp -fv "${kernel_packet_dir}/"*"$kernel_install"*.deb "${mountpoint}/tmp/packets"
+      #Normally we should use chroot.sh but it will lead to problems with PTY opening and loop unmounting. Fedora bug.
 		chroot "$mountpoint" bash -c "cd /tmp/packets/; dpkg -i *.deb"
 		rm -fr "$mountpoint/tmp/packets"
    fi
