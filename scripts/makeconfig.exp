@@ -133,7 +133,6 @@ configuration {
    DEBUG_LOCK_ALLOC              yes
    DEBUG_ATOMIC_SLEEP            yes
    DEBUG_STACK_USAGE             yes
-   DEBUG_INFO                    yes
    DEBUG_WRITECOUNT              yes
    DEBUG_LIST                    yes
    DEBUG_SG                      yes
@@ -141,6 +140,12 @@ configuration {
    DEBUG_STRICT_USER_COPY_CHECKS yes
    DEBUG_PAGEALLOC               yes
 
+   DEBUG_INFO                    yes
+   KPROBES                       yes
+   RELAY                         yes
+   DEBUG_FS                      yes
+   MODULES                       yes
+      MODULE_UNLOAD                 yes
 }
 
 #   -re {(\[(([YyNnMm\?\/]+)|((0x)?\d+)|((\(none\))|(\/sbin\/hotplug)|(rtc0)|(utf8)|(iso8859-1)))?\]|choice\[1(-\d+)?\??\]:)(\s+\(NEW\))?\s*$} {
