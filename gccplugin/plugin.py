@@ -23,7 +23,7 @@ def on_pass_execution(p, fn):
                   ops = dentry_ops
 
             if ops != None and var.decl.initial:
-               ops.update([b.operand.name for a,b in var.decl.initial.elements if isinstance(b, gcc.AddrExpr)])
+               ops.update([b.operand.name for a,b in var.decl.initial.elements if ( isinstance(b, gcc.AddrExpr) and isinstance(b.operand, gcc.FunctionDecl))])
 
       if super_ops or inode_ops or dentry_ops or file_ops:
          with open('%s-vfs_ops.sprute' % (gcc.get_dump_base_name()), 'w') as f:
