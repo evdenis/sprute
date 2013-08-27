@@ -7,7 +7,6 @@ use feature qw(say);
 
 use File::Basename;
 use File::Slurp qw(read_file);
-#use List::MoreUtils qw(uniq);
 
 my $path = $ARGV[0];
 
@@ -19,7 +18,7 @@ my $defn_file = $path;
 my @defn_files; 
 
 if ( -d $path ) {
-	my $defn_query = "grep --include=Makefile -rle 'obj-\$([[:alnum:]_]\\+)[[:space:]]*+\\?=[[:space:]]*'" . ' ' . $path;
+	my $defn_query = "grep --include=Makefile -rle 'obj-\$([[:alnum:]_]\\+)[[:space:]]*[:+]\\?=[[:space:]]*'" . ' ' . $path;
    @defn_files = qx($defn_query);
 
    if ( @defn_files eq 0 ) {
@@ -55,33 +54,30 @@ for my $file (@defn_files) {
 
          my $saved_pos = pos($data);
 
-			say $file . ' ' . $module;
-			push @deps, $+{deps} while ( $data =~ m/
-																	${module}-y
-																	\s*
-																	[:+]?=
-																	\s*
-																	(?<deps>
-																		(?<body>
-																			[^\\\n]*
-																			\\\n
-																			(?&body)?
-																		)?
-																	.+
-																	)
-																	$
-																/gmx );
-			#push @deps, $+{deps} while ( $data =~ m/${module}-objs\s*[:+]?=\s*(?<deps>(?<body>[^\\\n]*\\\n(?&body)?)?.+)$/g );
-			say @deps;
-			#while ( $data =~ m/${module}-objs\s*[:+]?=\s*(?<deps>(?<body>[^\\\n]*\\\n(?&body)?)?.+)$/g ) {
-				#push @deps, $+{deps};
-				#say $+{deps};
-			#}
-			#my $deps = $+{deps};
-			#say @deps;
-			#if (defined $deps) {
-			#	say $module . ' := ' . $deps;
-			#}
+			while ( $data =~ m/
+										${module}-(?:y|objs)
+										\s*
+										[:+]?=
+										\s*
+										(?<deps>
+											(?<body>
+												[^\\\n]*
+												\\\n
+												(?&body)?
+											)?
+										.+
+										)
+										$
+									/gmx ) {
+            my $tmp = $+{deps};
+            $tmp =~ s/\n//gm;
+            $tmp =~ s/\\//gm;
+            $tmp =~ s/\s+/ /gm;
+            push @deps, ( split / /, $tmp );
+         }
+         if ( @deps ) {
+   			say $module . ' := ' . join( ' ', @deps );
+         }
          pos($data) = $saved_pos;
 		}
 	}
