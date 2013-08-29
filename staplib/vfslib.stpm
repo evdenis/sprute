@@ -22,30 +22,30 @@ function inode_fields_init()
 
 @define make_inode_concolic(inode)
 %(
-   string desc = sprintf("inode addr: %p num: %l " &@inode, @inode->i_ino)
+   desc = sprintf("inode addr: %p num: %u ", &@inode, @inode->i_ino)
 
    //make_concolic_helper_bulk(@inode, i_count, desc)
-   s2e_make_concolic(@inode->i_count, sizeof(@inode->i_count), desc . "i_count")
-   s2e_make_concolic(@inode->i_mode,  sizeof(@inode->i_mode),  desc . "i_mode")
-   s2e_make_concolic(@inode->i_link,  sizeof(@inode->i_link),  desc . "i_link")
-   s2e_make_concolic(@inode->i_uid,   sizeof(@inode->i_uid),   desc . "i_uid")
-   s2e_make_concolic(@inode->i_gid,   sizeof(@inode->i_gid),   desc . "i_gid")
+   s2e_make_concolic(&@inode->i_count, sizeof(@inode->i_count), desc . "i_count")
+   s2e_make_concolic(&@inode->i_mode,  sizeof(@inode->i_mode),  desc . "i_mode")
+   s2e_make_concolic(&@inode->i_link,  sizeof(@inode->i_link),  desc . "i_link")
+   s2e_make_concolic(&@inode->i_uid,   sizeof(@inode->i_uid),   desc . "i_uid")
+   s2e_make_concolic(&@inode->i_gid,   sizeof(@inode->i_gid),   desc . "i_gid")
    //@inode->i_rdev
-   s2e_make_concolic(@inode->i_size,  sizeof(@inode->i_size),  desc . "i_size")
+   s2e_make_concolic(&@inode->i_size,  sizeof(@inode->i_size),  desc . "i_size")
    //@inode->i_atime
    //@inode->i_mtime
    //@inode->c_time
    //@inode->i_blkbits
    //@inode->i_blksize
-   s2e_make_concolic(@inode->i_version, sizeof(@inode->i_version), desc . "i_version")
+   s2e_make_concolic(&@inode->i_version, sizeof(@inode->i_version), desc . "i_version")
    //@inode->i_blocks
    //@inode->i_bytes
    //@inode->i_cindex
    //@inode->i_generation
    //@inode->i_dnotify_mask
-   s2e_make_concolic(@inode->i_state, sizeof(@inode->i_state), desc . "i_state")
+   s2e_make_concolic(&@inode->i_state, sizeof(@inode->i_state), desc . "i_state")
    //@inode->dirtied_when
-   s2e_make_concolic(@inode->i_flags, sizeof(@inode->i_flags), desc . "i_flags")
+   s2e_make_concolic(&@inode->i_flags, sizeof(@inode->i_flags), desc . "i_flags")
    //@inode->i_writecount
 %)
 

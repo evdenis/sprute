@@ -1,5 +1,5 @@
 
 @define ops_file_release(inode)
 %(
-   make_inode_concolic(@inode)
+   @make_inode_concolic(@inode)
 %)
