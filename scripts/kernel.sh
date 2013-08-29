@@ -7,6 +7,7 @@ source "${ldir}/lib/common.sh"
 load_default_config || exit 1
 
 lock_script
+trap unlock_script EXIT
 
 kdir=''
 
@@ -17,7 +18,8 @@ get_latest_stable_kernel () {
    # kernel archive file name from link
    local kfile="$(echo $link | grep -o -e 'linux-.*$')"
    # kernel source directory after unpacking
-   kdir="$(echo $kfile | grep -o -e 'linux-[\.[:digit:]]\+[[:digit:]]')"
+   kdir="${ldir}/$(echo $kfile | grep -o -e 'linux-[\.[:digit:]]\+[[:digit:]]')"
+   trap "rm -fr '${kdir}'" HUP INT QUIT TERM
 
 	if [[ ! ( -f $kfile && -d $kdir ) ]]
 	then
@@ -25,7 +27,7 @@ get_latest_stable_kernel () {
    	tar xf $kfile
 	else
 		return 1
-	fi	
+	fi
 }
 
 get_kernel () {
@@ -126,14 +128,10 @@ gcc_python_plugin_setup () {
 }
 
 
-trap "unlock_script; rm -fr '${kdir}'" HUP INT QUIT TERM
-
 gcc_python_plugin_setup &&
 get_kernel &&
 prepare_kernel &&
 configure_kernel &&
 compile_kernel &&
 install_kernel
-
-unlock_script
 

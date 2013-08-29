@@ -6,6 +6,7 @@ source "${ldir}/lib/common.sh"
 
 
 lock_script
+trap unlock_script EXIT
 
 pdir=''
 
@@ -22,6 +23,7 @@ get_gccpython () {
 		then
 			git clone git://git.fedorahosted.org/gcc-python-plugin.git
 			ret=$?
+         trap "rm -fr '${pdir}'" HUP INT QUIT TERM
 		else
 			cd $pdir
 			local out="$(git pull)"
@@ -68,7 +70,6 @@ install_gcc_plugin_dev () {
 	return 0
 }
 
-trap "unlock_script; rm -fr '${pdir}'" HUP INT QUIT TERM
 
 check_root
 
@@ -76,6 +77,4 @@ install_gcc_plugin_dev &&
 get_gccpython     &&
 compile_gccpython &&
 install_gccpython
-
-unlock_script
 
