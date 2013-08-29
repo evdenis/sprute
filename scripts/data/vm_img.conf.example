@@ -1,6 +1,18 @@
+get_username () {
+   local path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+   case "$path" in
+   /home/*)
+         echo "$(echo "$path" | cut -d '/' -f 3)";;
+   /root/*)
+         echo root;;
+   *)
+         echo root;;
+   esac
+}
+
 deploy_dir='./debian32'
 
-mkimg_user="$(logname)"
+mkimg_user="$(logname || id --user --name || get_username)"
 mkimg_name='test.raw'
 mkimg_size='20G'
 mkimg_system="$deploy_dir"
