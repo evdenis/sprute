@@ -182,10 +182,10 @@ sub check_arg_name
    $argline =~ s/^\s*//;
    $argline =~ s/\s*$//;
 
-   $argline =~ s/(\b(static|inline|extern|const|volatile|enum|struct|union)\s+)*//g;
+   $argline =~ s/(\b((static)|(inline)|(extern)|(const)|(volatile)|(enum)|(struct)|(union))\s+)*//g;
    $argline =~ s/\*//g;
    $argline =~ s/long\s+(?=long)//;
-   $argline =~ s/unsigned\s+(?=(long|int|char|short))//;
+   $argline =~ s/unsigned\s+(?=((long)|(int)|(char)|(short)))//;
    $argline =~ m/\w+\s+(?<arg_name>\w+)/;
    return $+{arg_name};
 }
@@ -202,13 +202,19 @@ sub check_arg_type
    $argline =~ s/\b__user\b//g;
    $argline =~ s/\{|\}//g;
 
-   $argline =~ s/(\b(static|inline|extern|const|volatile|union)\s+)*//g;
+   $argline =~ s/(\b((static)|(inline)|(extern)|(const)|(volatile)|(union))\s+)*//g;
    $argline =~ s/\b${argname}\b//;
    $argline =~ s/\s+/ /g;
    $argline =~ s/^\s*//;
    $argline =~ s/\s*$//;
 
    return $argline;
+}
+
+sub simple_type
+{
+   my $type = $_[0];
+   defined($type) && $type !~ m/(\b(struct)|(union)|(spinlock_t)\b)|\*/;
 }
 
 while ( $file =~ m/
@@ -371,12 +377,12 @@ while ( $file =~ m/
       } elsif ( $mark_fields ) {
          $decl =~ s/^[\s\n]*struct[\s\n]+\w+[\s\n]*{//;
          $decl =~ s/[\s\n]*}[\s\n]*;[\s\n]*$//;
-         sub get_var_name {
-         }
          # first we should filter only simple fields. There should be no nested unions and stuff like that.
          my @lines = split /;/, $decl;
          say "\@define make_${struct_name}_concolic( ${struct_name} )\n%(";
-         say "\tdesc = sprintf(\"${struct_name} addr: %p\", \@${struct_name} )";
+         say "\tdesc = sprintf(\"${struct_name} addr: %p\", \@${struct_name} )\n";
+
+         my $flag = 0;
          foreach my $line (@lines) {
             my $arg_name = check_arg_name($line);
             my $arg_type = check_arg_type($line, $arg_name);
@@ -385,10 +391,16 @@ while ( $file =~ m/
             $line =~ s/\s*$//;
             $line =~ s/\n//g;
             $line .= ';';
-            say "\t//" . $line;
             #say "NAME:\t" . $arg_name . "\nTYPE:\t" . $arg_type if defined $arg_name;
-            say "\ts2e_make_concolic( &\@${struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \"${arg_name}\" )" if defined $arg_name;
-            print "\n";
+            if ( simple_type($arg_type) ) {
+               print "\n" if $flag;
+               say "\t//" . $line;
+               say "\ts2e_make_concolic( &\@${struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \"${arg_name}\" )\n";
+               $flag = 0;
+            } else {
+               say "\t//" . $line;
+               $flag = 1;
+            }
          }
          say "%)"
       }
