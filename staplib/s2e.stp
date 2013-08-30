@@ -172,7 +172,7 @@ function s2e_get_path_id:long()
 function s2e_make_symbolic(buf:long, size:long, name:string)
 %{
     __s2e_touch_string(STAP_ARG_name);
-    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __s2e_touch_buffer((void*)(intptr_t)STAP_ARG_buf, (ulong)STAP_ARG_size);
     __asm__ __volatile__(
         S2E_INSTRUCTION_REGISTERS_SIMPLE(03)
         : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size), "c" (STAP_ARG_name) : "memory"
@@ -183,7 +183,7 @@ function s2e_make_symbolic(buf:long, size:long, name:string)
 function s2e_make_concolic(buf:long, size:long, name:string)
 %{
     __s2e_touch_string(STAP_ARG_name);
-    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __s2e_touch_buffer((void*)(intptr_t)STAP_ARG_buf, (ulong)STAP_ARG_size);
     __asm__ __volatile__(
         S2E_INSTRUCTION_REGISTERS_SIMPLE(11)
         : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size), "c" (STAP_ARG_name) : "memory"
@@ -205,7 +205,7 @@ function s2e_assume(expression:long)
 function s2e_is_symbolic:long(ptr:long, size:long)
 %{
     int result;
-    __s2e_touch_buffer((void*)STAP_ARG_ptr, 1);
+    __s2e_touch_buffer((void*)(intptr_t)STAP_ARG_ptr, 1);
     __asm__ __volatile__(
         S2E_INSTRUCTION_SIMPLE(04)
         : "=a" (result) : "a" ((uint32_t)STAP_ARG_size), "c" ((uint32_t)STAP_ARG_ptr)
@@ -216,7 +216,7 @@ function s2e_is_symbolic:long(ptr:long, size:long)
 /** Concretize the expression. */
 function s2e_concretize(buf:long, size:long)
 %{
-    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __s2e_touch_buffer((void*)(intptr_t)STAP_ARG_buf, (ulong)STAP_ARG_size);
     __asm__ __volatile__(
         S2E_INSTRUCTION_REGISTERS_SIMPLE(20)
         : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size) : "memory"
@@ -226,7 +226,7 @@ function s2e_concretize(buf:long, size:long)
 /** Get example value for expression (without adding state constraints). */
 function s2e_get_example(buf:long, size:long)
 %{
-    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_size);
+    __s2e_touch_buffer((void*)(intptr_t)STAP_ARG_buf, (ulong)STAP_ARG_size);
     __asm__ __volatile__(
         S2E_INSTRUCTION_REGISTERS_SIMPLE(21)
         : : "a" ((uint32_t)STAP_ARG_buf), "d" ((uint32_t)STAP_ARG_size) : "memory"
@@ -342,7 +342,7 @@ function s2e_close:long(fd:long)
 function s2e_read:long(fd:long, buf:string, count:long)
 %{
     int res;
-    __s2e_touch_buffer(STAP_ARG_buf, (ulong)STAP_ARG_count);
+    __s2e_touch_buffer((void*)STAP_ARG_buf, (ulong)STAP_ARG_count);
     __asm__ __volatile__(
 #ifdef __x86_64__
         "push %%rbx\n"
@@ -506,7 +506,7 @@ function s2e_invoke_plugin:long(pluginName:string, data:long, dataSize:long)
 %{
     int result;
     __s2e_touch_string(STAP_ARG_pluginName);
-    __s2e_touch_buffer((void *)STAP_ARG_data, (ulong)STAP_ARG_dataSize);
+    __s2e_touch_buffer((void *)(intptr_t)STAP_ARG_data, (ulong)STAP_ARG_dataSize);
     __asm__ __volatile__(
         S2E_INSTRUCTION_SIMPLE(0B)
         : "=a" (result) : "a" (STAP_ARG_pluginName), "c" ((uint32_t)STAP_ARG_data), "d" ((uint32_t)STAP_ARG_dataSize) : "memory"
