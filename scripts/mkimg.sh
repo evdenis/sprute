@@ -318,6 +318,22 @@ install_kernel () {
    fi
 }
 
+convert_img ()
+{
+   check_file "$name" &&
+   if [[ "$convert" == 'y' ]]
+   then
+      if [[ "$vm_type" == 'work' ]]
+      then
+         qemu-img convert -p -c -f raw -O qcow2 "$name" "${name%.raw}.qcow2" &&
+         rm -f "$name"
+      elif [[ "$vm_type" == 'test' ]]
+      then
+         mv -v "$name" "${name}.s2e"
+      fi
+   fi
+}
+
 check_root
 
 update_bootstrap "$system"
@@ -332,7 +348,8 @@ install_ssh_keys "$mountpoint" root "$vm_ssh_key" "$host_ssh_pub_key" &&
 install_sprute &&
 { if [[ "$vm_type" == 'work' ]]; then setup_cron "$mountpoint" "$vm_scripts_dir"; fi; } &&
 install_kernel &&
-install_extlinux "$loopdev" "$mountpoint"
+install_extlinux "$loopdev" "$mountpoint" &&
+convert_img "$name"
 
 #if [[ $vm_type == 'test' ]]
 #then
