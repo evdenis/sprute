@@ -15,6 +15,7 @@ my $struct_name = '';
 my $strip = 0;
 my $rem_macro = 0;
 my $extract_ops = 0;
+my $mark_fields = 0;
 
 GetOptions(
    'path|p=s' => \$path,
@@ -22,14 +23,16 @@ GetOptions(
    'strip|s!' => \$strip,
    'remove_macro|r!' => \$rem_macro,
    'extract_operations|e!' => \$extract_ops,
+   'mark_fields|m!' => \$mark_fields,
 ) or die "Incorrect usage!\n";
 
-if ( $extract_ops ) {
+#TODO: we should use simple ifdef/endif macro with mark_fields
+if ( $extract_ops or $mark_fields ) {
    $strip = 1;
    $rem_macro = 1;
 }
 
-if ( ! -r $path or !$struct_name ) {
+if ( ! -r $path or !$struct_name or ( $extract_ops and $mark_fields ) ) {
    die "Incorrect usage!\n";
 }
 
@@ -185,6 +188,27 @@ sub check_arg_name
    $argline =~ s/unsigned\s+(?=(long|int|char|short))//;
    $argline =~ m/\w+\s+(?<arg_name>\w+)/;
    return $+{arg_name};
+}
+
+sub check_arg_type
+{
+   my $argline = $_[0];
+   my $argname = $_[1];
+
+   if (!defined($argname)) {
+      return;
+   }
+
+   $argline =~ s/\b__user\b//g;
+   $argline =~ s/\{|\}//g;
+
+   $argline =~ s/(\b(static|inline|extern|const|volatile|union)\s+)*//g;
+   $argline =~ s/\b${argname}\b//;
+   $argline =~ s/\s+/ /g;
+   $argline =~ s/^\s*//;
+   $argline =~ s/\s*$//;
+
+   return $argline;
 }
 
 while ( $file =~ m/
@@ -344,8 +368,31 @@ while ( $file =~ m/
                say $fname . $argline;
             }
          }
+      } elsif ( $mark_fields ) {
+         $decl =~ s/^[\s\n]*struct[\s\n]+\w+[\s\n]*{//;
+         $decl =~ s/[\s\n]*}[\s\n]*;[\s\n]*$//;
+         sub get_var_name {
+         }
+         # first we should filter only simple fields. There should be no nested unions and stuff like that.
+         my @lines = split /;/, $decl;
+         say "\@define make_${struct_name}_concolic( ${struct_name} )\n%(";
+         say "\tdesc = sprintf(\"${struct_name} addr: %p\", \@${struct_name} )";
+         foreach my $line (@lines) {
+            my $arg_name = check_arg_name($line);
+            my $arg_type = check_arg_type($line, $arg_name);
+            $line =~ s/\s+/ /g;
+            $line =~ s/^\s*//;
+            $line =~ s/\s*$//;
+            $line =~ s/\n//g;
+            $line .= ';';
+            say "\t//" . $line;
+            #say "NAME:\t" . $arg_name . "\nTYPE:\t" . $arg_type if defined $arg_name;
+            say "\ts2e_make_concolic( &\@${struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \"${arg_name}\" )" if defined $arg_name;
+            print "\n";
+         }
+         say "%)"
       }
    }
 
-   say $decl if !$extract_ops;
+   say $decl if !( $extract_ops or $mark_fields );
 }
