@@ -63,7 +63,7 @@ install_gcc_plugin_dev () {
 
 	if [[ "$status" != 'install ok installed' ]]
 	then
-		apt-get install --assume-yes --force-yes $gcc_pldev_packet
+		apt-get -f install --assume-yes --force-yes $gcc_pldev_packet
 		return $?
 	fi
 

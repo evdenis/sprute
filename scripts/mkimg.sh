@@ -222,7 +222,7 @@ update_bootstrap () {
    then
       check_dir "$1" &&
       # Use carefully because of Fedora bug.
-      "${ldir}/chroot.sh" "$1" apt-get update \&\& apt-get --assume-yes --force-yes upgrade \&\& apt-get clean
+      "${ldir}/chroot.sh" "$1" apt-get update \&\& apt-get -f --assume-yes --force-yes upgrade \&\& apt-get clean
    fi
 }
 
