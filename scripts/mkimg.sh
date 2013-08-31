@@ -94,22 +94,22 @@ timeout 3
    do
       version="$(echo "$i" | sed -e 's/vmlinuz-//g')"
 
-	   if [[ -e "${1}/boot/initrd.img-${version}" ]]
-   	then
-	   	initrd="initrd=/boot/initrd.img-${version}"
-   	else
-	   	initrd=""
-   	fi
+      if [[ -e "${1}/boot/initrd.img-${version}" ]]
+      then
+         initrd="initrd=/boot/initrd.img-${version}"
+      else
+         initrd=""
+      fi
 
-	   # Writing default entry
-   	config="${config}
+      # Writing default entry
+      config="${config}
 
 label l${number}
-	menu label Debian GNU/Linux, kernel ${version}
-	linux /boot/vmlinuz-${version}
-	append ${initrd} root=/dev/sda1 ro"
+   menu label Debian GNU/Linux, kernel ${version}
+   linux /boot/vmlinuz-${version}
+   append ${initrd} root=/dev/sda1 ro"
 
-   	number="$((${number} + 1))"
+      number="$((${number} + 1))"
    done
    echo "${config}"
 }
@@ -310,11 +310,11 @@ install_sprute () {
 install_kernel () {
    if [[ -n "$kernel_install" ]] && check_dir "$kernel_packet_dir"
    then
-		mkdir -p "$mountpoint/tmp/packets"
-		cp -fv "${kernel_packet_dir}/"*"$kernel_install"*.deb "${mountpoint}/tmp/packets"
+      mkdir -p "$mountpoint/tmp/packets"
+      cp -fv "${kernel_packet_dir}/"*"$kernel_install"*.deb "${mountpoint}/tmp/packets"
       #Normally we should use chroot.sh but it will lead to problems with PTY opening and loop unmounting. Fedora bug.
-		chroot "$mountpoint" bash -c "cd /tmp/packets/; dpkg -i *.deb"
-		rm -fr "$mountpoint/tmp/packets"
+      chroot "$mountpoint" bash -c "cd /tmp/packets/; dpkg -i *.deb"
+      rm -fr "$mountpoint/tmp/packets"
    fi
 }
 

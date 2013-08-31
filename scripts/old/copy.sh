@@ -22,8 +22,8 @@ copy_scripts () {
 }
 
 copy_files () {
-	copy_scripts &&
-	copy_sprute
+   copy_scripts &&
+   copy_sprute
 }
 
 check_root

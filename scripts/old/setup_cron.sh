@@ -10,7 +10,7 @@ crontab="/etc/crontab"
 if [[ ! -d "$1" ]]
 then
    echo "Directory should be set." 2>&1
-	exit 1
+   exit 1
 fi
 
 commands=("${1}/gccpython.sh")
@@ -19,8 +19,8 @@ commands+=("${1}/kernel.sh")
 
 
 add_job () {
-	echo '#Next line was added automatically.' >> $crontab
-	echo "$@" >> $crontab
+   echo '#Next line was added automatically.' >> $crontab
+   echo "$@" >> $crontab
 }
 
 

@@ -6,9 +6,9 @@ declare -i threads_num=$(( $processors_num * ${PR_COEFF:-1} ))
 
 if [[ ! -d "$ldir" ]]
 then
-	#dir of calling script
-	#note the difference between $0 and ${BASH_SOURCE[0]}
-	ldir="$( cd "$( dirname "$0" )" && pwd )/../"
+   #dir of calling script
+   #note the difference between $0 and ${BASH_SOURCE[0]}
+   ldir="$( cd "$( dirname "$0" )" && pwd )/../"
 fi
 
 
@@ -24,11 +24,11 @@ unlock () {
 lockname="${ldir}/$(basename ${0}).lock"
 
 lock_script () {
-	lock "$lockname" || exit 0
+   lock "$lockname" || exit 0
 }
 
 unlock_script () {
-	unlock "$lockname"
+   unlock "$lockname"
 }
 
 

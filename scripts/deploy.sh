@@ -17,15 +17,15 @@ packets+=(python-dev python-six python-pygments python-sphinx graphviz)
 
 
 deploy_debian () {
-	local -i ret
+   local -i ret
 
-	IFS=','
-	mkdir -p "$dir"
-#	debootstrap --arch=i386 --include="${packets[*]}"  --variant=buildd sid "$dir"
-	debootstrap --arch=i386 --include="${packets[*]}" sid "$dir"
-	ret=$?
-	unset IFS
-	return $ret
+   IFS=','
+   mkdir -p "$dir"
+#   debootstrap --arch=i386 --include="${packets[*]}"  --variant=buildd sid "$dir"
+   debootstrap --arch=i386 --include="${packets[*]}" sid "$dir"
+   ret=$?
+   unset IFS
+   return $ret
 }
 
 
