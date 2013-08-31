@@ -1,5 +1,116 @@
-
-@define ops_file_release(inode)
+@define ops_file_llseek( file )
 %(
-   @make_inode_concolic(@inode)
+	@make_file_concolic( @file )
 %)
+
+@define ops_file_read( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_write( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_iterate( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_poll( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_unlocked_ioctl( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_compat_ioctl( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_mmap( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_open( inode, file )
+%(
+	@make_inode_concolic( @inode )
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_flush( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_release( inode, file )
+%(
+	@make_inode_concolic( @inode )
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_fsync( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_fasync( inode, file )
+%(
+	@make_inode_concolic( @inode )
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_lock( file1, file2 )
+%(
+	@make_file_concolic( @file1 )
+	@make_file_concolic( @file2 )
+%)
+
+@define ops_file_sendpage( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_get_unmapped_area( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_flock( file1, file2 )
+%(
+	@make_file_concolic( @file1 )
+	@make_file_concolic( @file2 )
+%)
+
+@define ops_file_splice_write( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_splice_read( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_setlease( file1, file2 )
+%(
+	@make_file_concolic( @file1 )
+	@make_file_concolic( @file2 )
+%)
+
+@define ops_file_fallocate( file )
+%(
+	@make_file_concolic( @file )
+%)
+
+@define ops_file_show_fdinfo( file )
+%(
+	@make_file_concolic( @file )
+%)
+

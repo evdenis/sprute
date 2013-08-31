@@ -1,66 +1,135 @@
-@define ops_inode_lookup(inode)
+@define ops_inode_lookup( inode, dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_permission(inode)
+@define ops_inode_follow_link( dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_create(inode)
+@define ops_inode_permission( inode )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
 %)
 
-@define ops_inode_link(inode)
+@define ops_inode_get_acl( inode )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
 %)
 
-@define ops_inode_unlink(inode)
+@define ops_inode_readlink( dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_symlink(inode)
+@define ops_inode_put_link( dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_mkdir(inode)
+@define ops_inode_create( inode, dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_rmdir(inode)
+@define ops_inode_link( dentry1, inode, dentry2 )
 %(
-   @make_inode_concolic(@inode)
+	@make_dentry_concolic( @dentry1 )
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry2 )
 %)
 
-@define ops_inode_mknod(inode)
+@define ops_inode_unlink( inode, dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_rename(inode1, inode2)
+@define ops_inode_symlink( inode, dentry )
 %(
-   @make_inode_concolic(@inode1)
-   @make_inode_concolic(@inode2)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_fiemap(inode)
+@define ops_inode_mkdir( inode, dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_update_time(inode)
+@define ops_inode_rmdir( inode, dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_atomic_open(inode)
+@define ops_inode_mknod( inode, dentry )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_rename( inode1, dentry1, inode2, dentry2 )
+%(
+	@make_inode_concolic( @inode1 )
+	@make_dentry_concolic( @dentry1 )
+	@make_inode_concolic( @inode2 )
+	@make_dentry_concolic( @dentry2 )
+%)
+
+@define ops_inode_setattr( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_getattr( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_setxattr( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_getxattr( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_listxattr( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_removexattr( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_inode_fiemap( inode )
+%(
+	@make_inode_concolic( @inode )
+%)
+
+@define ops_inode_update_time( inode )
+%(
+	@make_inode_concolic( @inode )
+%)
+
+@define ops_inode_atomic_open( inode, dentry, file )
+%(
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
+	@make_file_concolic( @file )
+%)
+
+@define ops_inode_tmpfile( inode, dentry )
+%(
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 

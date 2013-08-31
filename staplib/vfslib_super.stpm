@@ -1,18 +1,110 @@
-
-@define ops_super_write_inode(inode)
+@define ops_super_alloc_inode( super )
 %(
-   @make_inode_concolic(@inode)
+	@make_super_concolic( @super )
 %)
 
-@define ops_super_alloc_inode(inode)
+@define ops_super_destroy_inode( inode )
 %(
-   @make_inode_concolic(@inode)
+	@make_inode_concolic( @inode )
 %)
 
-@define ops_super_destroy_inode(inode)
+@define ops_super_dirty_inode( inode )
 %(
+	@make_inode_concolic( @inode )
 %)
 
-@define ops_super_evict_inode(inode)
+@define ops_super_write_inode( inode )
 %(
+	@make_inode_concolic( @inode )
 %)
+
+@define ops_super_drop_inode( inode )
+%(
+	@make_inode_concolic( @inode )
+%)
+
+@define ops_super_evict_inode( inode )
+%(
+	@make_inode_concolic( @inode )
+%)
+
+@define ops_super_put_super( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_sync_fs( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_freeze_fs( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_unfreeze_fs( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_statfs( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_super_remount_fs( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_umount_begin( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_show_options( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_super_show_devname( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_super_show_path( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_super_show_stats( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_super_quota_read( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_quota_write( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_bdev_try_to_free_page( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_nr_cached_objects( super )
+%(
+	@make_super_concolic( @super )
+%)
+
+@define ops_super_free_cached_objects( super )
+%(
+	@make_super_concolic( @super )
+%)
+

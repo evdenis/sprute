@@ -1,0 +1,54 @@
+@define ops_dentry_d_revalidate( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_weak_revalidate( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_hash( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_compare( dentry1, dentry2, dentry, inode )
+%(
+	@make_dentry_concolic( @dentry1 )
+	@make_dentry_concolic( @dentry2 )
+	@make_dentry_concolic( @dentry )
+	@make_inode_concolic( @inode )
+%)
+
+@define ops_dentry_d_delete( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_release( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_prune( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_iput( dentry, inode )
+%(
+	@make_dentry_concolic( @dentry )
+	@make_inode_concolic( @inode )
+%)
+
+@define ops_dentry_d_dname( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
+@define ops_dentry_d_manage( dentry )
+%(
+	@make_dentry_concolic( @dentry )
+%)
+
