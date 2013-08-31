@@ -10,3 +10,10 @@ do
    echo >> "$output"
 done
 
+output="../staplib/"
+
+for i in inode file dentry super
+do
+	./get_structure.pl --path /home/work/workspace/linux/include/ --name "${i}_operations" -e > "${output}/vfslib_${i}.stpm"
+done
+
