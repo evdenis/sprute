@@ -15,7 +15,7 @@ if ( ! defined($path) || ! -r $path ) {
 }
 
 my $defn_file = $path;
-my @defn_files; 
+my @defn_files;
 
 if ( -d $path ) {
    my $defn_query = "grep --include=Makefile -rle 'obj-\$([[:alnum:]_]\\+)[[:space:]]*[:+]\\?=[[:space:]]*'" . ' ' . $path;

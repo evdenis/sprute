@@ -197,7 +197,7 @@ setup_cron () {
 }
 
 
-# $1 - bootstrap 
+# $1 - bootstrap
 # $2 - mountpoint
 deploy_system () {
    check_dir "$1" &&

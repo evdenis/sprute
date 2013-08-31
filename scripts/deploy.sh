@@ -11,7 +11,7 @@ packets+=(extlinux linux-image-686-pae)
 packets+=(kernel-package fakeroot libncurses5-dev)
 packets+=(expect git libxml2-utils cron ssh liblockfile-bin bc)
 packets+=(wget ca-certificates)
-#gcc-python-plugin deps python-devel 
+#gcc-python-plugin deps python-devel
 #packets+=(gcc-4.8-plugin-dev) script should install apropriate version of package
 packets+=(python-dev python-six python-pygments python-sphinx graphviz)
 

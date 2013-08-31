@@ -65,7 +65,7 @@ prepare_kernel () {
 
    pushd $ldir
       patch_build_makefile &&
-      patch_fs_makefiles_for_gcov 
+      patch_fs_makefiles_for_gcov
       ret=$?
    popd
 

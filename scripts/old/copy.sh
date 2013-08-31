@@ -9,7 +9,7 @@ load_default_config || exit 1
 copy_sprute () {
    mkdir -p "$sprute_dir"
    pushd "${ldir}/../"
-      # --exclude='scripts/' doesn't work  
+      # --exclude='scripts/' doesn't work
       rsync -vRau $(git ls-tree -r HEAD --name-only . | grep -vFe 'scripts/') "$sprute_dir"
    popd
 }
