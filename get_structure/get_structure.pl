@@ -288,6 +288,9 @@ while ( $file =~ m/
       $decl =~ s/\n^\s*$//mg;
 
       if ( $rem_macro and $extract_ops ) {
+         $struct_name =~ m/^(?<st_name>\w+)_operations$/;
+         my $ops_struct_name = $struct_name;
+         $ops_struct_name = $+{st_name} if $+{st_name};
          $decl =~ s/^[\s\n]*struct[\s\n]+\w+[\s\n]*{//;
          $decl =~ s/[\s\n]*}[\s\n]*;[\s\n]*$//;
          my @lines = split /;/, $decl;
@@ -356,31 +359,52 @@ while ( $file =~ m/
                            #$arg_name = $pr_arg_names[0] ? $pr_arg_names[0] : $arg_names[int($#arg_names/2)];
                         }
                         $args[$i] = $arg_name;
-                    }
+                     }
                   }
-                  $argline .= $args[$i] . ', ' if $args[$i];
                }
 
-               $argline =~ s/, $//;
-               $argline .= ')';
+               #normalization
+               foreach my $i (0..$#args) {
+                  my $index = 1;
+                  foreach my $arg (@args[$i+1 .. $#args]) {
+                     if ($arg and $args[$i] eq $arg) {
+                        $args[$i] .= '1' if $args[$i] =~ m/\w+/;
+                        $arg .= ++$index;
+                     }
+                  }
+               }
 
-               arg_normalize( $argline, "inode" );
-               arg_normalize( $argline, "dentry" );
-               arg_normalize( $argline, "file" );
-               arg_normalize( $argline, "super" );
-               # This is for names, that can't find.
-               arg_normalize( $argline, "var" );
-
-               say $fname . $argline;
+               #exclude
+               my @args_v2;
+               foreach my $i (0..$#args) {
+                  push @args_v2, $args[$i] if $args[$i] =~ m/(file)|(inode)|(dentry)|(super)/;
+               }
+               
+               if (@args_v2) {
+                  say "\@define ops_${ops_struct_name}_${fname}( " . join( ", ", @args_v2 ) . " )\n%(";
+                  foreach my $arg (@args_v2) {
+                     given ( $arg ) {
+                        when ( /^file/ )   { say "\t\@make_file_concolic( \@${arg} )" }
+                        when ( /^inode/ )  { say "\t\@make_inode_concolic( \@${arg} )" }
+                        when ( /^dentry/ ) { say "\t\@make_dentry_concolic( \@${arg} )" }
+                        when ( /^super/ )  { say "\t\@make_super_concolic( \@${arg} )" }
+                     }
+                  }
+                  say "%)\n";
+               }
             }
          }
       } elsif ( $mark_fields ) {
+         $struct_name =~ m/^(?<st_name>\w+)_block$/;
+         my $sc_struct_name = $struct_name;
+         $sc_struct_name = $+{st_name} if $+{st_name};
+
          $decl =~ s/^[\s\n]*struct[\s\n]+\w+[\s\n]*{//;
          $decl =~ s/[\s\n]*}[\s\n]*;[\s\n]*$//;
          # first we should filter only simple fields. There should be no nested unions and stuff like that.
          my @lines = split /;/, $decl;
-         say "\@define make_${struct_name}_concolic( ${struct_name} )\n%(";
-         say "\tdesc = sprintf(\"${struct_name} addr: %p\", \@${struct_name} )\n";
+         say "\@define make_${sc_struct_name}_concolic( ${sc_struct_name} )\n%(";
+         say "\tdesc = sprintf(\"${sc_struct_name} addr: %p\", \@${sc_struct_name} )\n";
 
          my $flag = 0;
          foreach my $line (@lines) {
@@ -395,7 +419,7 @@ while ( $file =~ m/
             if ( simple_type($arg_type) ) {
                print "\n" if $flag;
                say "\t//" . $line;
-               say "\ts2e_make_concolic( &\@${struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \"${arg_name}\" )\n";
+               say "\ts2e_make_concolic( &\@${sc_struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \"${arg_name}\" )\n";
                $flag = 0;
             } else {
                say "\t//" . $line;
