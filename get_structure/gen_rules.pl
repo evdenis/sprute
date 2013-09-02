@@ -1,31 +1,38 @@
 #!/usr/bin/env perl
 
+use strict;
+use warnings;
+use 5.10.0;
+use feature qw(say);
 
-#local $\ = undef;
-my @file = <>;
+use File::Slurp qw(read_file);
 
-my $template = "\@define <name>\n%(\n<actions>\n%)\n\n";
+#TODO: module name
+#TODO: arg names
+#TODO: duplicating functions
+#TODO: out of the module functions
+#TODO: module dependence
 
-sub add_action {
-   $_[0] .= "\n" . "\t" . $_[1];
-}
+my $module = "fat";
 
-my @list = ('inode', 'file', 'super', 'dentry');
+foreach my $i (<>) {
+   $i =~ m/^(?<st>\w+);(?<op>\w+)=(?<cb>\w+)$/;
+   my ($struct, $callback, $function) = ($+{st}, $+{op}, $+{cb});
 
-foreach $i (@file) {
-   chomp $i;
-   if (not $i =~ m/^\s*$/) {
-      my $tmpl = $template;
-      my $actions;
+   if ($struct and $callback and $function) {
+      if ( $function !~ m/^generic_/ ) {
+         #FIXME: remove hardcoded path
+         my $libfile = "/home/work/workspace/sprute/staplib/vfslib_${struct}.stpm"; 
+         my $operation = "ops_${struct}_${callback}";
 
-      $tmpl =~ s/<name>/$i/;
-      foreach $j (@list) {
-         while ($i =~ m/(?<arg>$j\d?)/g) {
-            print $+{arg} . "\n";
-            add_action($actions, 'make_action(' . $+{arg} . ')');
-         }
+         my $lib = read_file($libfile);
+         $lib =~ m/${operation}\s*\((?<args>[^)]+)\)/m;
+         die("Can't find arguments.") if not $+{args};
+         my @args = split(/,/, $+{args});
+
+         say "probe module( \"${module}\" ).function( \"${function}\" ) {";
+         say "\t\@ops_${struct}_${callback}( " . join(', ', map { $_ =~ s/\s//g; '$' . $_; }  @args) . " )";
+         say "}\n";
       }
-      $tmpl =~ s/<actions>/$actions/;
-      print $tmpl;
    }
 }
