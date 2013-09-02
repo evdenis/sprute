@@ -23,15 +23,13 @@ def on_pass_execution(p, fn):
                   ops = dentry_ops
 
             if ops != None and var.decl.initial:
-               ops.update(['{} = {}'.format(a.name, b.operand.name) for a,b in var.decl.initial.elements if ( isinstance(b, gcc.AddrExpr) and isinstance(b.operand, gcc.FunctionDecl))])
+               ops.update(['{}={}'.format(a.name, b.operand.name) for a,b in var.decl.initial.elements if ( isinstance(b, gcc.AddrExpr) and isinstance(b.operand, gcc.FunctionDecl))])
 
       if super_ops or inode_ops or dentry_ops or file_ops:
          with open('%s-vfs_ops.sprute' % (gcc.get_dump_base_name()), 'w') as f:
             for i in [['super', super_ops], ['inode', inode_ops], ['dentry', dentry_ops], ['file', file_ops]]:
                if i[1]:
-                 f.write( '<' + '#'*20 + ' ' + i[0] + ' ' + '#'*20 + '\n' )
-                 f.write('\n'.join(i[1]) + '\n' )
-                 f.write( '#'*50 + '>\n' )
+                  f.write("\n".join(map(lambda x: i[0] + ';' + x, i[1])) + '\n' )
 
 
 gcc.register_callback(gcc.PLUGIN_PASS_EXECUTION, on_pass_execution)
