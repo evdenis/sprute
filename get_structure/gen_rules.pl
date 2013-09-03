@@ -6,7 +6,7 @@ use 5.10.0;
 use feature qw(say);
 
 use File::Slurp qw(read_file);
-use List::MoreUtils qw(uniq);
+#use List::MoreUtils qw(uniq);
 use Getopt::Long qw(:config gnu_getopt);
 
 #TODO: arg names
@@ -39,6 +39,12 @@ die "Wrong format of ${depdb}: number of ${module}.ko occurences $#str." if ( $#
 
 my @operations = read_file("${cbdir}/${module}.sprute", chomp => 1);
 
+sub uniq
+{
+   my %seen;
+   grep { $_ =~ m/=(?<cb>\w+)$/; !$seen{$+{cb}?$+{cb}:$_}++ } @_;
+}
+
 @operations = uniq(@operations);
 
 foreach my $i (@operations) {
@@ -62,3 +68,4 @@ foreach my $i (@operations) {
       }
    }
 }
+
