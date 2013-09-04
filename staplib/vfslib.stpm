@@ -115,7 +115,6 @@
 	desc = sprintf("file addr: %p", @file )
 
 	//union { struct list_head fu_list;
-	//struct llist_node fu_llist;
 	//struct rcu_head fu_rcuhead;
 	//} f_u;
 	//struct path f_path;
@@ -174,7 +173,10 @@
 	//unsigned char d_iname[DNAME_INLINE_LEN];
 	s2e_make_concolic( &@dentry->d_iname, %{ sizeof( unsigned char [DNAME_INLINE_LEN] ) %}, desc . "d_iname" )
 
-	//struct lockref d_lockref;
+	//unsigned int d_count;
+	s2e_make_concolic( &@dentry->d_count, %{ sizeof( unsigned int ) %}, desc . "d_count" )
+
+	//spinlock_t d_lock;
 	//const struct dentry_operations *d_op;
 	//struct super_block *d_sb;
 

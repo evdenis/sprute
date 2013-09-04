@@ -8,12 +8,12 @@
 	@make_inode_concolic( @inode )
 %)
 
-@define ops_super_dirty_inode( inode )
+@define ops_super_dirty_inode( inode, flags )
 %(
 	@make_inode_concolic( @inode )
 %)
 
-@define ops_super_write_inode( inode )
+@define ops_super_write_inode( inode, wbc )
 %(
 	@make_inode_concolic( @inode )
 %)
@@ -33,7 +33,7 @@
 	@make_super_concolic( @super )
 %)
 
-@define ops_super_sync_fs( super )
+@define ops_super_sync_fs( super, wait )
 %(
 	@make_super_concolic( @super )
 %)
@@ -48,12 +48,12 @@
 	@make_super_concolic( @super )
 %)
 
-@define ops_super_statfs( dentry )
+@define ops_super_statfs( dentry, buf )
 %(
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_super_remount_fs( super )
+@define ops_super_remount_fs( super, mount_flags, raw_data )
 %(
 	@make_super_concolic( @super )
 %)
@@ -63,37 +63,37 @@
 	@make_super_concolic( @super )
 %)
 
-@define ops_super_show_options( dentry )
+@define ops_super_show_options( seq, dentry )
 %(
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_super_show_devname( dentry )
+@define ops_super_show_devname( m, dentry )
 %(
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_super_show_path( dentry )
+@define ops_super_show_path( m, dentry )
 %(
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_super_show_stats( dentry )
+@define ops_super_show_stats( m, dentry )
 %(
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_super_quota_read( super )
+@define ops_super_quota_read( super, type, data, len, off )
 %(
 	@make_super_concolic( @super )
 %)
 
-@define ops_super_quota_write( super )
+@define ops_super_quota_write( super, type, data, len, off )
 %(
 	@make_super_concolic( @super )
 %)
 
-@define ops_super_bdev_try_to_free_page( super )
+@define ops_super_bdev_try_to_free_page( super, page, wait )
 %(
 	@make_super_concolic( @super )
 %)
@@ -103,7 +103,7 @@
 	@make_super_concolic( @super )
 %)
 
-@define ops_super_free_cached_objects( super )
+@define ops_super_free_cached_objects( super, nr_to_scan )
 %(
 	@make_super_concolic( @super )
 %)

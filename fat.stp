@@ -1,0 +1,72 @@
+probe module( "fat" ).function( "fat_file_fsync" ) {
+	@ops_file_fsync( $filp, $start, $end, $datasync )
+}
+
+probe module( "fat" ).function( "fat_readdir" ) {
+	@ops_file_readdir( $filp, $dirent, $filldir )
+}
+
+probe module( "fat" ).function( "fat_dir_ioctl" ) {
+	@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+}
+
+probe module( "fat" ).function( "fat_setattr" ) {
+	@ops_inode_setattr( $dentry, $attr )
+}
+
+probe module( "fat" ).function( "fat_getattr" ) {
+	@ops_inode_getattr( $mnt, $dentry, $stat )
+}
+
+probe module( "fat" ).function( "fat_generic_ioctl" ) {
+	@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+}
+
+probe module( "fat" ).function( "fat_file_release" ) {
+	@ops_file_release( $inode, $filp )
+}
+
+probe module( "fat" ).function( "fat_alloc_inode" ) {
+	@ops_super_alloc_inode( $sb )
+}
+
+probe module( "fat" ).function( "fat_show_options" ) {
+	@ops_super_show_options( $m, $root )
+}
+
+probe module( "fat" ).function( "fat_statfs" ) {
+	@ops_super_statfs( $dentry, $buf )
+}
+
+probe module( "fat" ).function( "fat_put_super" ) {
+	@ops_super_put_super( $sb )
+}
+
+probe module( "fat" ).function( "fat_write_inode" ) {
+	@ops_super_write_inode( $inode, $wbc )
+}
+
+probe module( "fat" ).function( "fat_evict_inode" ) {
+	@ops_super_evict_inode( $inode )
+}
+
+probe module( "fat" ).function( "fat_remount" ) {
+	@ops_super_remount_fs( $sb, $flags, $data )
+}
+
+probe module( "fat" ).function( "fat_destroy_inode" ) {
+	@ops_super_destroy_inode( $inode )
+}
+
+/*
+ * file;fsync=fat_file_fsync
+ * file;llseek=generic_file_llseek
+ * file;llseek=generic_file_llseek
+ * file;read=generic_read_dir
+ * file;aio_read=generic_file_aio_read
+ * file;aio_write=generic_file_aio_write
+ * file;mmap=generic_file_mmap
+ * file;write=do_sync_write
+ * file;read=do_sync_read
+ * file;splice_read=generic_file_splice_read
+ */

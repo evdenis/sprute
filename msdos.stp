@@ -1,0 +1,36 @@
+probe module( "msdos" ).function( "msdos_create" ) {
+	@ops_inode_create( $dir, $dentry, $mode, $excl )
+}
+
+probe module( "msdos" ).function( "msdos_rmdir" ) {
+	@ops_inode_rmdir( $dir, $dentry )
+}
+
+probe module( "msdos" ).function( "msdos_rename" ) {
+	@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+}
+
+probe module( "msdos" ).function( "msdos_unlink" ) {
+	@ops_inode_unlink( $dir, $dentry )
+}
+
+probe module( "msdos" ).function( "msdos_mkdir" ) {
+	@ops_inode_mkdir( $dir, $dentry, $mode )
+}
+
+probe module( "msdos" ).function( "msdos_lookup" ) {
+	@ops_inode_lookup( $dir, $dentry, $flags )
+}
+
+probe module( "msdos" ).function( "msdos_hash" ) {
+	@ops_dentry_d_hash( $dentry, $inode, $qstr )
+}
+
+probe module( "msdos" ).function( "msdos_cmp" ) {
+	@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+}
+
+/*
+ * inode;setattr=fat_setattr
+ * inode;getattr=fat_getattr
+ */

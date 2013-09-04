@@ -1,0 +1,94 @@
+probe module( "minix" ).function( "minix_unlink" ) {
+	@ops_inode_unlink( $dir, $dentry )
+}
+
+probe module( "minix" ).function( "minix_mkdir" ) {
+	@ops_inode_mkdir( $dir, $dentry, $mode )
+}
+
+probe module( "minix" ).function( "minix_rename" ) {
+	@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+}
+
+probe module( "minix" ).function( "minix_rmdir" ) {
+	@ops_inode_rmdir( $dir, $dentry )
+}
+
+probe module( "minix" ).function( "minix_symlink" ) {
+	@ops_inode_symlink( $dir, $dentry, $symname )
+}
+
+probe module( "minix" ).function( "minix_link" ) {
+	@ops_inode_link( $old_dentry, $dir, $dentry )
+}
+
+probe module( "minix" ).function( "minix_mknod" ) {
+	@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+}
+
+probe module( "minix" ).function( "minix_lookup" ) {
+	@ops_inode_lookup( $dir, $dentry, $flags )
+}
+
+probe module( "minix" ).function( "minix_getattr" ) {
+	@ops_inode_getattr( $mnt, $dentry, $stat )
+}
+
+probe module( "minix" ).function( "minix_create" ) {
+	@ops_inode_create( $dir, $dentry, $mode, $excl )
+}
+
+probe module( "minix" ).function( "minix_remount" ) {
+	@ops_super_remount_fs( $sb, $flags, $data )
+}
+
+probe module( "minix" ).function( "minix_evict_inode" ) {
+	@ops_super_evict_inode( $inode )
+}
+
+probe module( "minix" ).function( "minix_write_inode" ) {
+	@ops_super_write_inode( $inode, $wbc )
+}
+
+probe module( "minix" ).function( "minix_put_super" ) {
+	@ops_super_put_super( $sb )
+}
+
+probe module( "minix" ).function( "minix_alloc_inode" ) {
+	@ops_super_alloc_inode( $sb )
+}
+
+probe module( "minix" ).function( "minix_statfs" ) {
+	@ops_super_statfs( $dentry, $buf )
+}
+
+probe module( "minix" ).function( "minix_destroy_inode" ) {
+	@ops_super_destroy_inode( $inode )
+}
+
+probe module( "minix" ).function( "minix_setattr" ) {
+	@ops_inode_setattr( $dentry, $attr )
+}
+
+probe module( "minix" ).function( "minix_readdir" ) {
+	@ops_file_readdir( $filp, $dirent, $filldir )
+}
+
+/*
+ * inode;getattr=minix_getattr
+ * inode;getattr=minix_getattr
+ * file;llseek=generic_file_llseek
+ * file;fsync=generic_file_fsync
+ * inode;follow_link=page_follow_link_light
+ * inode;put_link=page_put_link
+ * inode;readlink=generic_readlink
+ * file;aio_write=generic_file_aio_write
+ * file;write=do_sync_write
+ * file;splice_read=generic_file_splice_read
+ * file;read=do_sync_read
+ * file;mmap=generic_file_mmap
+ * file;aio_read=generic_file_aio_read
+ * file;fsync=generic_file_fsync
+ * file;llseek=generic_file_llseek
+ * file;read=generic_read_dir
+ */

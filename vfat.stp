@@ -1,0 +1,52 @@
+probe module( "vfat" ).function( "vfat_rmdir" ) {
+	@ops_inode_rmdir( $dir, $dentry )
+}
+
+probe module( "vfat" ).function( "vfat_lookup" ) {
+	@ops_inode_lookup( $dir, $dentry, $flags )
+}
+
+probe module( "vfat" ).function( "vfat_unlink" ) {
+	@ops_inode_unlink( $dir, $dentry )
+}
+
+probe module( "vfat" ).function( "vfat_rename" ) {
+	@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+}
+
+probe module( "vfat" ).function( "vfat_mkdir" ) {
+	@ops_inode_mkdir( $dir, $dentry, $mode )
+}
+
+probe module( "vfat" ).function( "vfat_create" ) {
+	@ops_inode_create( $dir, $dentry, $mode, $excl )
+}
+
+probe module( "vfat" ).function( "vfat_revalidate" ) {
+	@ops_dentry_d_revalidate( $dentry, $flags )
+}
+
+probe module( "vfat" ).function( "vfat_hash" ) {
+	@ops_dentry_d_hash( $dentry, $inode, $qstr )
+}
+
+probe module( "vfat" ).function( "vfat_hashi" ) {
+	@ops_dentry_d_hash( $dentry, $inode, $qstr )
+}
+
+probe module( "vfat" ).function( "vfat_revalidate_ci" ) {
+	@ops_dentry_d_revalidate( $dentry, $flags )
+}
+
+probe module( "vfat" ).function( "vfat_cmp" ) {
+	@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+}
+
+probe module( "vfat" ).function( "vfat_cmpi" ) {
+	@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+}
+
+/*
+ * inode;getattr=fat_getattr
+ * inode;setattr=fat_setattr
+ */

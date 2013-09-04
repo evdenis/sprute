@@ -1,39 +1,47 @@
-@define ops_file_llseek( file )
+@define ops_file_llseek( file, offset, whence )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_read( file )
+@define ops_file_read( file, buf, siz, ppos )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_write( file )
+@define ops_file_write( file, user_buffer, count_user, offset )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_iterate( file )
+@define ops_file_aio_read( iocb, _iov, nr_segs, offset )
+%(
+%)
+
+@define ops_file_aio_write( iocb, _iov, nr_segs, offset )
+%(
+%)
+
+@define ops_file_readdir( file, dirent, filldir )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_poll( file )
+@define ops_file_poll( file, poll_table )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_unlocked_ioctl( file )
+@define ops_file_unlocked_ioctl( file, ioctl_num, ioctl_param )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_compat_ioctl( file )
+@define ops_file_compat_ioctl( file, command, argaddr )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_mmap( file )
+@define ops_file_mmap( file, area )
 %(
 	@make_file_concolic( @file )
 %)
@@ -44,7 +52,7 @@
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_flush( file )
+@define ops_file_flush( file, id )
 %(
 	@make_file_concolic( @file )
 %)
@@ -55,61 +63,69 @@
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_fsync( file )
+@define ops_file_fsync( file, start, end, datasync )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_fasync( inode, file )
+@define ops_file_aio_fsync( iocb, datasync )
+%(
+%)
+
+@define ops_file_fasync( inode, file, mode )
 %(
 	@make_inode_concolic( @inode )
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_lock( file1, file2 )
+@define ops_file_lock( file1, cmd, file2 )
 %(
 	@make_file_concolic( @file1 )
 	@make_file_concolic( @file2 )
 %)
 
-@define ops_file_sendpage( file )
+@define ops_file_sendpage( file, page, offset, size, ppos, more )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_get_unmapped_area( file )
+@define ops_file_get_unmapped_area( file, addr, len, pgoff, flags )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_flock( file1, file2 )
+@define ops_file_check_flags( flags )
+%(
+%)
+
+@define ops_file_flock( file1, cmd, file2 )
 %(
 	@make_file_concolic( @file1 )
 	@make_file_concolic( @file2 )
 %)
 
-@define ops_file_splice_write( file )
+@define ops_file_splice_write( pipe, file, ppos, count, flags )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_splice_read( file )
+@define ops_file_splice_read( file, ppos, pipe, count, flags )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_setlease( file1, file2 )
+@define ops_file_setlease( file1, arg, file2 )
 %(
 	@make_file_concolic( @file1 )
 	@make_file_concolic( @file2 )
 %)
 
-@define ops_file_fallocate( file )
+@define ops_file_fallocate( file, mode, offset, len )
 %(
 	@make_file_concolic( @file )
 %)
 
-@define ops_file_show_fdinfo( file )
+@define ops_file_show_fdinfo( m, file )
 %(
 	@make_file_concolic( @file )
 %)
