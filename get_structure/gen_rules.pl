@@ -9,7 +9,6 @@ use File::Slurp qw(read_file);
 #use List::MoreUtils qw(uniq);
 use Getopt::Long qw(:config gnu_getopt);
 
-#TODO: arg names
 #TODO: module dependence
 
 my $path = '';
@@ -25,16 +24,33 @@ GetOptions(
 ) or die "Incorrect usage!\n";
 
 die "Path, depdb, cbdir and module should be set.\n" if ( ! ( $path and $module and $depdb and $cbdir ) );
-die "${path} - is not a path to kernel sources dir." if (! -f "${path}/Kbuild");
-die "Can't read ${depdb}" if (! -r $depdb);
-die "There is no such directory ${cbdir}" if (! -d $cbdir);
-die "Can't read ${module} in ${cbdir}" if (! -r "${cbdir}/${module}.sprute");
+die "${path} - is not a path to kernel sources dir.\n" if (! -f "${path}/Kbuild");
+die "Can't read ${depdb}\n" if (! -r $depdb);
+die "There is no such directory ${cbdir}\n" if (! -d $cbdir);
+die "Can't read ${module} in ${cbdir}\n" if (! -r "${cbdir}/${module}.sprute");
 
 my @modules_files = read_file($depdb, chomp => 1);
 
 my @dbstr = grep(/\/${module}.ko :=/, @modules_files);
 
-die "Wrong format of ${depdb}: number of ${module}.ko occurences $#dbstr." if ( $#dbstr ne 0 );
+die "Wrong format of ${depdb}: number of ${module}.ko occurences $#dbstr.\n" if ( $#dbstr ne 0 );
+
+sub check_arg_name
+{
+   my $argline = $_[0];
+
+   $argline =~ s/\b__user\b//g;
+   $argline =~ s/^\s*//;
+   $argline =~ s/\s*$//;
+
+   $argline =~ s/(\b((static)|(inline)|(extern)|(const)|(volatile)|(enum)|(struct)|(union))\s+)*//g;
+   $argline =~ s/\*//g;
+   $argline =~ s/long\s+(?=long)//;
+   $argline =~ s/unsigned\s+(?=((long)|(int)|(char)|(short)))//;
+   $argline =~ m/\w+\s+(?<arg_name>\w+)/;
+   return $+{arg_name};
+}
+
 
 my @module_files = $dbstr[0] =~ m/\b([[:alnum:]\/\-\_]+\.o)\b/g;
 @module_files = map { $path . substr($_, 0, -2) . '.c' } @module_files;
@@ -59,25 +75,37 @@ foreach my $i (@operations) {
    if ($struct and $callback and $function) {
       my @query = (
                   'grep',
-                  '-Pzlqe',
-                  '(?s)\b' . $function . '\s*(?<fargs>\((?:(?>[^\(\)]+)|(?&fargs))+\))\s*(?:(?:(?:__(?:acquires|releases|attribute__)\s*(?<margs>\((?:(?>[^\(\)]+)|(?&margs))+\)))|__attribute_const__|CONSTF|\\\\)\s*)*\{',
+                  '-PzHoe',
+                  q!'(?s)\b! . $function . q!\s*\K(?<fargs>\((?:(?>[^\(\)]+)|(?&fargs))+\))(?=\s*(?:(?:(?:__(?:acquires|releases|attribute__)\s*(?<margs>\((?:(?>[^\(\)]+)|(?&margs))+\)))|__attribute_const__|CONSTF|\\\\)\s*)*\{)'!,
                   @module_files
             );
-
-      system( @query );
+      my $str_query = join(' ', @query);
+      my $output = qx($str_query);
 
       if ( $? eq 0 ) {
-         #FIXME: remove hardcoded path
-         my $libfile = "/home/work/workspace/sprute/staplib/vfslib_${struct}.stpm"; 
-         my $operation = "ops_${struct}_${callback}";
+         my $count =()= $output =~ m/\.c:\(/g;
+         if ($count ne 1) {
+            print STDERR "There is more than definition of function ${function}\n";
+            print STDERR "${output}";
+            print STDERR "This function will not be included in stp file.\n";
+            push @ungenerated, $i;
+            next;
+         }
+         $output =~ s/\n//g;
+         $output =~ s/\s+/ /g;
+         $output =~ s/\)\s*$//;
+         $output =~ s/^.+?\.c:\(//;
 
-         my $lib = read_file($libfile);
-         $lib =~ m/${operation}\s*\((?<args>[^)]+)\)/m;
-         die("Can't find arguments.") if not $+{args};
-         my @args = split(/,/, $+{args});
+         my @arguments = split(/,/, $output);
+         map { s/^\s+//; s/\s+$//; } @arguments;
+
+         #filtering
+         @arguments = grep { m/\bstruct\s+((inode)|(dentry)|(file)|(super))/ } @arguments;
+
+         map { my $name = check_arg_name $_; if ($name) { $_ = $name } else { die "Can't find arg name in string: '$_'" } } @arguments;
 
          say "probe module( \"${module}\" ).function( \"${function}\" ) {";
-         say "\t\@ops_${struct}_${callback}( " . join(', ', map { $_ =~ s/\s//g; '$' . $_; }  @args) . " )";
+         say "\t\@ops_${struct}_${callback}( " . join(', ', map { $_ =~ s/\s//g; '$' . $_; }  @arguments) . " )";
          say "}\n";
       } else {
          push @ungenerated, $i;
