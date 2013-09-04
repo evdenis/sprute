@@ -374,15 +374,12 @@ while ( $file =~ m/
                   }
                }
 
-               #exclude
-               my @args_v2;
-               foreach my $i (0..$#args) {
-                  push @args_v2, $args[$i] if $args[$i] =~ m/(file)|(inode)|(dentry)|(super)/;
-               }
+               #filter
+               #@args = grep { m/(file)|(inode)|(dentry)|(super)/ } @args;
                
-               if (@args_v2) {
-                  say "\@define ops_${ops_struct_name}_${fname}( " . join( ", ", @args_v2 ) . " )\n%(";
-                  foreach my $arg (@args_v2) {
+               if (@args) {
+                  say "\@define ops_${ops_struct_name}_${fname}( " . join(', ', @args) . " )\n%(";
+                  foreach my $arg (@args) {
                      given ( $arg ) {
                         when ( /^file/ )   { say "\t\@make_file_concolic( \@${arg} )" }
                         when ( /^inode/ )  { say "\t\@make_inode_concolic( \@${arg} )" }

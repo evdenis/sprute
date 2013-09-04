@@ -99,8 +99,8 @@ foreach my $i (@operations) {
          my @arguments = split(/,/, $output);
          map { s/^\s+//; s/\s+$//; } @arguments;
 
-         #filtering
-         @arguments = grep { m/\bstruct\s+((inode)|(dentry)|(file)|(super))/ } @arguments;
+         #filter
+         #@arguments = grep { m/\bstruct\s+((inode)|(dentry)|(file)|(super))/ } @arguments;
 
          map { my $name = check_arg_name $_; if ($name) { $_ = $name } else { die "Can't find arg name in string: '$_'" } } @arguments;
 
