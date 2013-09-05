@@ -96,7 +96,7 @@ compile_kernel () {
 }
 
 install_kernel () {
-   pushd $HOME
+   pushd "${kdir}/../"
       if [[ $should_install == 'y' ]]
       then
          if ! check_root_noexit

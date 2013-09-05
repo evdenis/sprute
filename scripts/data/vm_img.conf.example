@@ -41,6 +41,8 @@ run_shared_host_shared_folder="/home/${mkimg_user}/Dropbox/shared/"
 mkimg_kernel_install='3.10.4'
 mkimg_kernel_packet_dir="/home/${user}/Dropbox/shared/kernels/"
 
+kernel_should_install='y'
+
 mkimg_convert='y'
 
 chroot_default_dir='/mnt/raw'
