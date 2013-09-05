@@ -1,77 +1,231 @@
+global mode="release"
+
 probe module( "minix" ).function( "minix_unlink" ) {
-	@ops_inode_unlink( $dir, $dentry )
+	if ( mode == "debug" ) {
+		println( "minix_unlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_unlink" )
+		} else {
+			@ops_inode_unlink( $dir, $dentry )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_mkdir" ) {
-	@ops_inode_mkdir( $dir, $dentry, $mode )
+	if ( mode == "debug" ) {
+		println( "minix_mkdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_mkdir" )
+		} else {
+			@ops_inode_mkdir( $dir, $dentry, $mode )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_rename" ) {
-	@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+	if ( mode == "debug" ) {
+		println( "minix_rename" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_rename" )
+		} else {
+			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_rmdir" ) {
-	@ops_inode_rmdir( $dir, $dentry )
+	if ( mode == "debug" ) {
+		println( "minix_rmdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_rmdir" )
+		} else {
+			@ops_inode_rmdir( $dir, $dentry )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_symlink" ) {
-	@ops_inode_symlink( $dir, $dentry, $symname )
+	if ( mode == "debug" ) {
+		println( "minix_symlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_symlink" )
+		} else {
+			@ops_inode_symlink( $dir, $dentry, $symname )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_link" ) {
-	@ops_inode_link( $old_dentry, $dir, $dentry )
+	if ( mode == "debug" ) {
+		println( "minix_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_link" )
+		} else {
+			@ops_inode_link( $old_dentry, $dir, $dentry )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_mknod" ) {
-	@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+	if ( mode == "debug" ) {
+		println( "minix_mknod" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_mknod" )
+		} else {
+			@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_lookup" ) {
-	@ops_inode_lookup( $dir, $dentry, $flags )
+	if ( mode == "debug" ) {
+		println( "minix_lookup" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_lookup" )
+		} else {
+			@ops_inode_lookup( $dir, $dentry, $flags )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_getattr" ) {
-	@ops_inode_getattr( $mnt, $dentry, $stat )
+	if ( mode == "debug" ) {
+		println( "minix_getattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_getattr" )
+		} else {
+			@ops_inode_getattr( $mnt, $dentry, $stat )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_create" ) {
-	@ops_inode_create( $dir, $dentry, $mode, $excl )
+	if ( mode == "debug" ) {
+		println( "minix_create" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_create" )
+		} else {
+			@ops_inode_create( $dir, $dentry, $mode, $excl )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_remount" ) {
-	@ops_super_remount_fs( $sb, $flags, $data )
+	if ( mode == "debug" ) {
+		println( "minix_remount" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_remount" )
+		} else {
+			@ops_super_remount_fs( $sb, $flags, $data )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_evict_inode" ) {
-	@ops_super_evict_inode( $inode )
+	if ( mode == "debug" ) {
+		println( "minix_evict_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_evict_inode" )
+		} else {
+			@ops_super_evict_inode( $inode )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_write_inode" ) {
-	@ops_super_write_inode( $inode, $wbc )
+	if ( mode == "debug" ) {
+		println( "minix_write_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_write_inode" )
+		} else {
+			@ops_super_write_inode( $inode, $wbc )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_put_super" ) {
-	@ops_super_put_super( $sb )
+	if ( mode == "debug" ) {
+		println( "minix_put_super" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_put_super" )
+		} else {
+			@ops_super_put_super( $sb )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_alloc_inode" ) {
-	@ops_super_alloc_inode( $sb )
+	if ( mode == "debug" ) {
+		println( "minix_alloc_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_alloc_inode" )
+		} else {
+			@ops_super_alloc_inode( $sb )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_statfs" ) {
-	@ops_super_statfs( $dentry, $buf )
+	if ( mode == "debug" ) {
+		println( "minix_statfs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_statfs" )
+		} else {
+			@ops_super_statfs( $dentry, $buf )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_destroy_inode" ) {
-	@ops_super_destroy_inode( $inode )
+	if ( mode == "debug" ) {
+		println( "minix_destroy_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_destroy_inode" )
+		} else {
+			@ops_super_destroy_inode( $inode )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_setattr" ) {
-	@ops_inode_setattr( $dentry, $attr )
+	if ( mode == "debug" ) {
+		println( "minix_setattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_setattr" )
+		} else {
+			@ops_inode_setattr( $dentry, $attr )
+		}
+	}
 }
 
 probe module( "minix" ).function( "minix_readdir" ) {
-	@ops_file_readdir( $filp, $dirent, $filldir )
+	if ( mode == "debug" ) {
+		println( "minix_readdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_readdir" )
+		} else {
+			@ops_file_readdir( $filp, $dirent, $filldir )
+		}
+	}
 }
 
 /*

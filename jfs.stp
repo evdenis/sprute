@@ -1,165 +1,495 @@
+global mode="release"
+
 probe module( "jfs" ).function( "jfs_freeze" ) {
-	@ops_super_freeze_fs( $sb )
+	if ( mode == "debug" ) {
+		println( "jfs_freeze" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_freeze" )
+		} else {
+			@ops_super_freeze_fs( $sb )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_unfreeze" ) {
-	@ops_super_unfreeze_fs( $sb )
+	if ( mode == "debug" ) {
+		println( "jfs_unfreeze" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_unfreeze" )
+		} else {
+			@ops_super_unfreeze_fs( $sb )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_evict_inode" ) {
-	@ops_super_evict_inode( $inode )
+	if ( mode == "debug" ) {
+		println( "jfs_evict_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_evict_inode" )
+		} else {
+			@ops_super_evict_inode( $inode )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_quota_write" ) {
-	@ops_super_quota_write( $sb, $type, $data, $len, $off )
+	if ( mode == "debug" ) {
+		println( "jfs_quota_write" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_quota_write" )
+		} else {
+			@ops_super_quota_write( $sb, $type, $data, $len, $off )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_destroy_inode" ) {
-	@ops_super_destroy_inode( $inode )
+	if ( mode == "debug" ) {
+		println( "jfs_destroy_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_destroy_inode" )
+		} else {
+			@ops_super_destroy_inode( $inode )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_remount" ) {
-	@ops_super_remount_fs( $sb, $flags, $data )
+	if ( mode == "debug" ) {
+		println( "jfs_remount" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_remount" )
+		} else {
+			@ops_super_remount_fs( $sb, $flags, $data )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_alloc_inode" ) {
-	@ops_super_alloc_inode( $sb )
+	if ( mode == "debug" ) {
+		println( "jfs_alloc_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_alloc_inode" )
+		} else {
+			@ops_super_alloc_inode( $sb )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_dirty_inode" ) {
-	@ops_super_dirty_inode( $inode, $flags )
+	if ( mode == "debug" ) {
+		println( "jfs_dirty_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_dirty_inode" )
+		} else {
+			@ops_super_dirty_inode( $inode, $flags )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_put_super" ) {
-	@ops_super_put_super( $sb )
+	if ( mode == "debug" ) {
+		println( "jfs_put_super" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_put_super" )
+		} else {
+			@ops_super_put_super( $sb )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_sync_fs" ) {
-	@ops_super_sync_fs( $sb, $wait )
+	if ( mode == "debug" ) {
+		println( "jfs_sync_fs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_sync_fs" )
+		} else {
+			@ops_super_sync_fs( $sb, $wait )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_quota_read" ) {
-	@ops_super_quota_read( $sb, $type, $data, $len, $off )
+	if ( mode == "debug" ) {
+		println( "jfs_quota_read" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_quota_read" )
+		} else {
+			@ops_super_quota_read( $sb, $type, $data, $len, $off )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_show_options" ) {
-	@ops_super_show_options( $seq, $root )
+	if ( mode == "debug" ) {
+		println( "jfs_show_options" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_show_options" )
+		} else {
+			@ops_super_show_options( $seq, $root )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_write_inode" ) {
-	@ops_super_write_inode( $inode, $wbc )
+	if ( mode == "debug" ) {
+		println( "jfs_write_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_write_inode" )
+		} else {
+			@ops_super_write_inode( $inode, $wbc )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_statfs" ) {
-	@ops_super_statfs( $dentry, $buf )
+	if ( mode == "debug" ) {
+		println( "jfs_statfs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_statfs" )
+		} else {
+			@ops_super_statfs( $dentry, $buf )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_setxattr" ) {
-	@ops_inode_setxattr( $dentry, $name, $value, $value_len, $flags )
+	if ( mode == "debug" ) {
+		println( "jfs_setxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_setxattr" )
+		} else {
+			@ops_inode_setxattr( $dentry, $name, $value, $value_len, $flags )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_setattr" ) {
-	@ops_inode_setattr( $dentry, $iattr )
+	if ( mode == "debug" ) {
+		println( "jfs_setattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_setattr" )
+		} else {
+			@ops_inode_setattr( $dentry, $iattr )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_removexattr" ) {
-	@ops_inode_removexattr( $dentry, $name )
+	if ( mode == "debug" ) {
+		println( "jfs_removexattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_removexattr" )
+		} else {
+			@ops_inode_removexattr( $dentry, $name )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_getxattr" ) {
-	@ops_inode_getxattr( $dentry, $name, $data, $buf_size )
+	if ( mode == "debug" ) {
+		println( "jfs_getxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_getxattr" )
+		} else {
+			@ops_inode_getxattr( $dentry, $name, $data, $buf_size )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_get_acl" ) {
-	@ops_inode_get_acl( $inode, $type )
+	if ( mode == "debug" ) {
+		println( "jfs_get_acl" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_get_acl" )
+		} else {
+			@ops_inode_get_acl( $inode, $type )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_listxattr" ) {
-	@ops_inode_listxattr( $dentry, $data, $buf_size )
+	if ( mode == "debug" ) {
+		println( "jfs_listxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_listxattr" )
+		} else {
+			@ops_inode_listxattr( $dentry, $data, $buf_size )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_fsync" ) {
-	@ops_file_fsync( $file, $start, $end, $datasync )
+	if ( mode == "debug" ) {
+		println( "jfs_fsync" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_fsync" )
+		} else {
+			@ops_file_fsync( $file, $start, $end, $datasync )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_ioctl" ) {
-	@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+	if ( mode == "debug" ) {
+		println( "jfs_ioctl" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_ioctl" )
+		} else {
+			@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_open" ) {
-	@ops_file_open( $inode, $file )
+	if ( mode == "debug" ) {
+		println( "jfs_open" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_open" )
+		} else {
+			@ops_file_open( $inode, $file )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_release" ) {
-	@ops_file_release( $inode, $file )
+	if ( mode == "debug" ) {
+		println( "jfs_release" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_release" )
+		} else {
+			@ops_file_release( $inode, $file )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_symlink" ) {
-	@ops_inode_symlink( $dip, $dentry, $name )
+	if ( mode == "debug" ) {
+		println( "jfs_symlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_symlink" )
+		} else {
+			@ops_inode_symlink( $dip, $dentry, $name )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_unlink" ) {
-	@ops_inode_unlink( $dip, $dentry )
+	if ( mode == "debug" ) {
+		println( "jfs_unlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_unlink" )
+		} else {
+			@ops_inode_unlink( $dip, $dentry )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_link" ) {
-	@ops_inode_link( $old_dentry, $dir, $dentry )
+	if ( mode == "debug" ) {
+		println( "jfs_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_link" )
+		} else {
+			@ops_inode_link( $old_dentry, $dir, $dentry )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_mkdir" ) {
-	@ops_inode_mkdir( $dip, $dentry, $mode )
+	if ( mode == "debug" ) {
+		println( "jfs_mkdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_mkdir" )
+		} else {
+			@ops_inode_mkdir( $dip, $dentry, $mode )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_create" ) {
-	@ops_inode_create( $dip, $dentry, $mode, $excl )
+	if ( mode == "debug" ) {
+		println( "jfs_create" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_create" )
+		} else {
+			@ops_inode_create( $dip, $dentry, $mode, $excl )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_lookup" ) {
-	@ops_inode_lookup( $dip, $dentry, $flags )
+	if ( mode == "debug" ) {
+		println( "jfs_lookup" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_lookup" )
+		} else {
+			@ops_inode_lookup( $dip, $dentry, $flags )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_rmdir" ) {
-	@ops_inode_rmdir( $dip, $dentry )
+	if ( mode == "debug" ) {
+		println( "jfs_rmdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_rmdir" )
+		} else {
+			@ops_inode_rmdir( $dip, $dentry )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_mknod" ) {
-	@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+	if ( mode == "debug" ) {
+		println( "jfs_mknod" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_mknod" )
+		} else {
+			@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_rename" ) {
-	@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+	if ( mode == "debug" ) {
+		println( "jfs_rename" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_rename" )
+		} else {
+			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_ci_hash" ) {
-	@ops_dentry_d_hash( $dir, $inode, $this )
+	if ( mode == "debug" ) {
+		println( "jfs_ci_hash" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_ci_hash" )
+		} else {
+			@ops_dentry_d_hash( $dir, $inode, $this )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_ci_compare" ) {
-	@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+	if ( mode == "debug" ) {
+		println( "jfs_ci_compare" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_ci_compare" )
+		} else {
+			@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_ci_revalidate" ) {
-	@ops_dentry_d_revalidate( $dentry, $flags )
+	if ( mode == "debug" ) {
+		println( "jfs_ci_revalidate" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_ci_revalidate" )
+		} else {
+			@ops_dentry_d_revalidate( $dentry, $flags )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_readdir" ) {
-	@ops_file_readdir( $filp, $dirent, $filldir )
+	if ( mode == "debug" ) {
+		println( "jfs_readdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_readdir" )
+		} else {
+			@ops_file_readdir( $filp, $dirent, $filldir )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_loglevel_proc_write" ) {
-	@ops_file_write( $file, $buffer, $count, $ppos )
+	if ( mode == "debug" ) {
+		println( "jfs_loglevel_proc_write" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_loglevel_proc_write" )
+		} else {
+			@ops_file_write( $file, $buffer, $count, $ppos )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_loglevel_proc_open" ) {
-	@ops_file_open( $inode, $file )
+	if ( mode == "debug" ) {
+		println( "jfs_loglevel_proc_open" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_loglevel_proc_open" )
+		} else {
+			@ops_file_open( $inode, $file )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_follow_link" ) {
-	@ops_inode_follow_link( $dentry, $nd )
+	if ( mode == "debug" ) {
+		println( "jfs_follow_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_follow_link" )
+		} else {
+			@ops_inode_follow_link( $dentry, $nd )
+		}
+	}
 }
 
 probe module( "jfs" ).function( "jfs_txanchor_proc_open" ) {
-	@ops_file_open( $inode, $file )
+	if ( mode == "debug" ) {
+		println( "jfs_txanchor_proc_open" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "jfs_txanchor_proc_open" )
+		} else {
+			@ops_file_open( $inode, $file )
+		}
+	}
 }
 
 /*
