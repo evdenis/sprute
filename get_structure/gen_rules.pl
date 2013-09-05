@@ -67,6 +67,7 @@ sub uniq
 
 @operations = uniq(@operations);
 
+say "global mode=\"release\"\n";
 
 foreach my $i (@operations) {
    $i =~ m/^(?<st>\w+);(?<op>\w+)=(?<cb>\w+)$/;
@@ -105,7 +106,15 @@ foreach my $i (@operations) {
          map { my $name = check_arg_name $_; if ($name) { $_ = $name } else { die "Can't find arg name in string: '$_'" } } @arguments;
 
          say "probe module( \"${module}\" ).function( \"${function}\" ) {";
-         say "\t\@ops_${struct}_${callback}( " . join(', ', map { $_ =~ s/\s//g; '$' . $_; }  @arguments) . " )";
+         say "\tif ( mode == \"debug\" ) {";
+         say "\t\tprintln( \"${function}\" )";
+         say "\t} else {";
+         say "\t\tif ( mode == \"s2e_debug\" ) {";
+         say "\t\t\ts2e_message( \"${function}\" )";
+         say "\t\t} else {";
+         say "\t\t\t\@ops_${struct}_${callback}( " . join(', ', map { $_ =~ s/\s//g; '$' . $_; }  @arguments) . " )";
+         say "\t\t}";
+         say "\t}";
          say "}\n";
       } else {
          push @ungenerated, $i;
