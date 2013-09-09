@@ -21,7 +21,7 @@
 %(
 %)
 
-@define ops_file_readdir( file, dirent, filldir )
+@define ops_file_iterate( file, ctx )
 %(
 	@make_file_concolic( @file )
 %)
@@ -72,9 +72,8 @@
 %(
 %)
 
-@define ops_file_fasync( inode, file, mode )
+@define ops_file_fasync( fd, file, mode )
 %(
-	@make_inode_concolic( @inode )
 	@make_file_concolic( @file )
 %)
 

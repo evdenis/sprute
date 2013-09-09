@@ -1,13 +1,85 @@
 global mode="release"
 
-probe module( "minix" ).function( "minix_unlink" ) {
+probe module( "minix" ).function( "minix_alloc_inode" ) {
 	if ( mode == "debug" ) {
-		println( "minix_unlink" )
+		println( "minix_alloc_inode" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_unlink" )
+			s2e_message( "minix_alloc_inode" )
 		} else {
-			@ops_inode_unlink( $dir, $dentry )
+			@ops_super_alloc_inode( $sb )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_create" ) {
+	if ( mode == "debug" ) {
+		println( "minix_create" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_create" )
+		} else {
+			@ops_inode_create( $dir, $dentry, $mode, $excl )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_destroy_inode" ) {
+	if ( mode == "debug" ) {
+		println( "minix_destroy_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_destroy_inode" )
+		} else {
+			@ops_super_destroy_inode( $inode )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_evict_inode" ) {
+	if ( mode == "debug" ) {
+		println( "minix_evict_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_evict_inode" )
+		} else {
+			@ops_super_evict_inode( $inode )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_getattr" ) {
+	if ( mode == "debug" ) {
+		println( "minix_getattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_getattr" )
+		} else {
+			@ops_inode_getattr( $mnt, $dentry, $stat )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_link" ) {
+	if ( mode == "debug" ) {
+		println( "minix_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_link" )
+		} else {
+			@ops_inode_link( $old_dentry, $dir, $dentry )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_lookup" ) {
+	if ( mode == "debug" ) {
+		println( "minix_lookup" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_lookup" )
+		} else {
+			@ops_inode_lookup( $dir, $dentry, $flags )
 		}
 	}
 }
@@ -20,6 +92,54 @@ probe module( "minix" ).function( "minix_mkdir" ) {
 			s2e_message( "minix_mkdir" )
 		} else {
 			@ops_inode_mkdir( $dir, $dentry, $mode )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_mknod" ) {
+	if ( mode == "debug" ) {
+		println( "minix_mknod" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_mknod" )
+		} else {
+			@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_put_super" ) {
+	if ( mode == "debug" ) {
+		println( "minix_put_super" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_put_super" )
+		} else {
+			@ops_super_put_super( $sb )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_readdir" ) {
+	if ( mode == "debug" ) {
+		println( "minix_readdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_readdir" )
+		} else {
+			@ops_file_iterate( $file, $ctx )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_remount" ) {
+	if ( mode == "debug" ) {
+		println( "minix_remount" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_remount" )
+		} else {
+			@ops_super_remount_fs( $sb, $flags, $data )
 		}
 	}
 }
@@ -48,134 +168,14 @@ probe module( "minix" ).function( "minix_rmdir" ) {
 	}
 }
 
-probe module( "minix" ).function( "minix_symlink" ) {
+probe module( "minix" ).function( "minix_setattr" ) {
 	if ( mode == "debug" ) {
-		println( "minix_symlink" )
+		println( "minix_setattr" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_symlink" )
+			s2e_message( "minix_setattr" )
 		} else {
-			@ops_inode_symlink( $dir, $dentry, $symname )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_link" ) {
-	if ( mode == "debug" ) {
-		println( "minix_link" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_link" )
-		} else {
-			@ops_inode_link( $old_dentry, $dir, $dentry )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_mknod" ) {
-	if ( mode == "debug" ) {
-		println( "minix_mknod" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_mknod" )
-		} else {
-			@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_lookup" ) {
-	if ( mode == "debug" ) {
-		println( "minix_lookup" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_lookup" )
-		} else {
-			@ops_inode_lookup( $dir, $dentry, $flags )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_getattr" ) {
-	if ( mode == "debug" ) {
-		println( "minix_getattr" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_getattr" )
-		} else {
-			@ops_inode_getattr( $mnt, $dentry, $stat )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_create" ) {
-	if ( mode == "debug" ) {
-		println( "minix_create" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_create" )
-		} else {
-			@ops_inode_create( $dir, $dentry, $mode, $excl )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_remount" ) {
-	if ( mode == "debug" ) {
-		println( "minix_remount" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_remount" )
-		} else {
-			@ops_super_remount_fs( $sb, $flags, $data )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_evict_inode" ) {
-	if ( mode == "debug" ) {
-		println( "minix_evict_inode" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_evict_inode" )
-		} else {
-			@ops_super_evict_inode( $inode )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_write_inode" ) {
-	if ( mode == "debug" ) {
-		println( "minix_write_inode" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_write_inode" )
-		} else {
-			@ops_super_write_inode( $inode, $wbc )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_put_super" ) {
-	if ( mode == "debug" ) {
-		println( "minix_put_super" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_put_super" )
-		} else {
-			@ops_super_put_super( $sb )
-		}
-	}
-}
-
-probe module( "minix" ).function( "minix_alloc_inode" ) {
-	if ( mode == "debug" ) {
-		println( "minix_alloc_inode" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_alloc_inode" )
-		} else {
-			@ops_super_alloc_inode( $sb )
+			@ops_inode_setattr( $dentry, $attr )
 		}
 	}
 }
@@ -192,57 +192,69 @@ probe module( "minix" ).function( "minix_statfs" ) {
 	}
 }
 
-probe module( "minix" ).function( "minix_destroy_inode" ) {
+probe module( "minix" ).function( "minix_symlink" ) {
 	if ( mode == "debug" ) {
-		println( "minix_destroy_inode" )
+		println( "minix_symlink" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_destroy_inode" )
+			s2e_message( "minix_symlink" )
 		} else {
-			@ops_super_destroy_inode( $inode )
+			@ops_inode_symlink( $dir, $dentry, $symname )
 		}
 	}
 }
 
-probe module( "minix" ).function( "minix_setattr" ) {
+probe module( "minix" ).function( "minix_tmpfile" ) {
 	if ( mode == "debug" ) {
-		println( "minix_setattr" )
+		println( "minix_tmpfile" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_setattr" )
+			s2e_message( "minix_tmpfile" )
 		} else {
-			@ops_inode_setattr( $dentry, $attr )
+			@ops_inode_tmpfile( $dir, $dentry, $mode )
 		}
 	}
 }
 
-probe module( "minix" ).function( "minix_readdir" ) {
+probe module( "minix" ).function( "minix_unlink" ) {
 	if ( mode == "debug" ) {
-		println( "minix_readdir" )
+		println( "minix_unlink" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "minix_readdir" )
+			s2e_message( "minix_unlink" )
 		} else {
-			@ops_file_readdir( $filp, $dirent, $filldir )
+			@ops_inode_unlink( $dir, $dentry )
+		}
+	}
+}
+
+probe module( "minix" ).function( "minix_write_inode" ) {
+	if ( mode == "debug" ) {
+		println( "minix_write_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "minix_write_inode" )
+		} else {
+			@ops_super_write_inode( $inode, $wbc )
 		}
 	}
 }
 
 /*
- * inode;getattr=minix_getattr
- * inode;getattr=minix_getattr
- * file;llseek=generic_file_llseek
  * file;fsync=generic_file_fsync
+ * file;llseek=generic_file_llseek
+ * inode;getattr=minix_getattr
+ * inode;getattr=minix_getattr
+ * file;read=do_sync_read
+ * file;write=do_sync_write
+ * file;aio_read=generic_file_aio_read
+ * file;aio_write=generic_file_aio_write
+ * file;fsync=generic_file_fsync
+ * file;llseek=generic_file_llseek
+ * file;mmap=generic_file_mmap
+ * file;splice_read=generic_file_splice_read
+ * file;read=generic_read_dir
+ * inode;readlink=generic_readlink
  * inode;follow_link=page_follow_link_light
  * inode;put_link=page_put_link
- * inode;readlink=generic_readlink
- * file;aio_write=generic_file_aio_write
- * file;write=do_sync_write
- * file;splice_read=generic_file_splice_read
- * file;read=do_sync_read
- * file;mmap=generic_file_mmap
- * file;aio_read=generic_file_aio_read
- * file;fsync=generic_file_fsync
- * file;llseek=generic_file_llseek
- * file;read=generic_read_dir
  */

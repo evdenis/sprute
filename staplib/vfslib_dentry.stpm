@@ -8,18 +8,15 @@
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_dentry_d_hash( dentry, inode, this )
+@define ops_dentry_d_hash( dentry, this )
 %(
 	@make_dentry_concolic( @dentry )
-	@make_inode_concolic( @inode )
 %)
 
-@define ops_dentry_d_compare( dentry1, inode1, dentry2, inode2, len, str, name )
+@define ops_dentry_d_compare( dentry1, dentry2, len, str, name )
 %(
 	@make_dentry_concolic( @dentry1 )
-	@make_inode_concolic( @inode1 )
 	@make_dentry_concolic( @dentry2 )
-	@make_inode_concolic( @inode2 )
 %)
 
 @define ops_dentry_d_delete( dentry )

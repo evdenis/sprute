@@ -1,5 +1,17 @@
 global mode="release"
 
+probe module( "msdos" ).function( "msdos_cmp" ) {
+	if ( mode == "debug" ) {
+		println( "msdos_cmp" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "msdos_cmp" )
+		} else {
+			@ops_dentry_d_compare( $parent, $dentry, $len, $str, $name )
+		}
+	}
+}
+
 probe module( "msdos" ).function( "msdos_create" ) {
 	if ( mode == "debug" ) {
 		println( "msdos_create" )
@@ -12,50 +24,14 @@ probe module( "msdos" ).function( "msdos_create" ) {
 	}
 }
 
-probe module( "msdos" ).function( "msdos_rmdir" ) {
+probe module( "msdos" ).function( "msdos_hash" ) {
 	if ( mode == "debug" ) {
-		println( "msdos_rmdir" )
+		println( "msdos_hash" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "msdos_rmdir" )
+			s2e_message( "msdos_hash" )
 		} else {
-			@ops_inode_rmdir( $dir, $dentry )
-		}
-	}
-}
-
-probe module( "msdos" ).function( "msdos_rename" ) {
-	if ( mode == "debug" ) {
-		println( "msdos_rename" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "msdos_rename" )
-		} else {
-			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
-		}
-	}
-}
-
-probe module( "msdos" ).function( "msdos_unlink" ) {
-	if ( mode == "debug" ) {
-		println( "msdos_unlink" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "msdos_unlink" )
-		} else {
-			@ops_inode_unlink( $dir, $dentry )
-		}
-	}
-}
-
-probe module( "msdos" ).function( "msdos_mkdir" ) {
-	if ( mode == "debug" ) {
-		println( "msdos_mkdir" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "msdos_mkdir" )
-		} else {
-			@ops_inode_mkdir( $dir, $dentry, $mode )
+			@ops_dentry_d_hash( $dentry, $qstr )
 		}
 	}
 }
@@ -72,31 +48,55 @@ probe module( "msdos" ).function( "msdos_lookup" ) {
 	}
 }
 
-probe module( "msdos" ).function( "msdos_hash" ) {
+probe module( "msdos" ).function( "msdos_mkdir" ) {
 	if ( mode == "debug" ) {
-		println( "msdos_hash" )
+		println( "msdos_mkdir" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "msdos_hash" )
+			s2e_message( "msdos_mkdir" )
 		} else {
-			@ops_dentry_d_hash( $dentry, $inode, $qstr )
+			@ops_inode_mkdir( $dir, $dentry, $mode )
 		}
 	}
 }
 
-probe module( "msdos" ).function( "msdos_cmp" ) {
+probe module( "msdos" ).function( "msdos_rename" ) {
 	if ( mode == "debug" ) {
-		println( "msdos_cmp" )
+		println( "msdos_rename" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "msdos_cmp" )
+			s2e_message( "msdos_rename" )
 		} else {
-			@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+		}
+	}
+}
+
+probe module( "msdos" ).function( "msdos_rmdir" ) {
+	if ( mode == "debug" ) {
+		println( "msdos_rmdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "msdos_rmdir" )
+		} else {
+			@ops_inode_rmdir( $dir, $dentry )
+		}
+	}
+}
+
+probe module( "msdos" ).function( "msdos_unlink" ) {
+	if ( mode == "debug" ) {
+		println( "msdos_unlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "msdos_unlink" )
+		} else {
+			@ops_inode_unlink( $dir, $dentry )
 		}
 	}
 }
 
 /*
- * inode;setattr=fat_setattr
  * inode;getattr=fat_getattr
+ * inode;setattr=fat_setattr
  */

@@ -1,25 +1,25 @@
 global mode="release"
 
-probe module( "fat" ).function( "fat_file_fsync" ) {
+probe module( "fat" ).function( "fat_alloc_inode" ) {
 	if ( mode == "debug" ) {
-		println( "fat_file_fsync" )
+		println( "fat_alloc_inode" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_file_fsync" )
+			s2e_message( "fat_alloc_inode" )
 		} else {
-			@ops_file_fsync( $filp, $start, $end, $datasync )
+			@ops_super_alloc_inode( $sb )
 		}
 	}
 }
 
-probe module( "fat" ).function( "fat_readdir" ) {
+probe module( "fat" ).function( "fat_destroy_inode" ) {
 	if ( mode == "debug" ) {
-		println( "fat_readdir" )
+		println( "fat_destroy_inode" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_readdir" )
+			s2e_message( "fat_destroy_inode" )
 		} else {
-			@ops_file_readdir( $filp, $dirent, $filldir )
+			@ops_super_destroy_inode( $inode )
 		}
 	}
 }
@@ -36,38 +36,26 @@ probe module( "fat" ).function( "fat_dir_ioctl" ) {
 	}
 }
 
-probe module( "fat" ).function( "fat_setattr" ) {
+probe module( "fat" ).function( "fat_evict_inode" ) {
 	if ( mode == "debug" ) {
-		println( "fat_setattr" )
+		println( "fat_evict_inode" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_setattr" )
+			s2e_message( "fat_evict_inode" )
 		} else {
-			@ops_inode_setattr( $dentry, $attr )
+			@ops_super_evict_inode( $inode )
 		}
 	}
 }
 
-probe module( "fat" ).function( "fat_getattr" ) {
+probe module( "fat" ).function( "fat_file_fsync" ) {
 	if ( mode == "debug" ) {
-		println( "fat_getattr" )
+		println( "fat_file_fsync" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_getattr" )
+			s2e_message( "fat_file_fsync" )
 		} else {
-			@ops_inode_getattr( $mnt, $dentry, $stat )
-		}
-	}
-}
-
-probe module( "fat" ).function( "fat_generic_ioctl" ) {
-	if ( mode == "debug" ) {
-		println( "fat_generic_ioctl" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_generic_ioctl" )
-		} else {
-			@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+			@ops_file_fsync( $filp, $start, $end, $datasync )
 		}
 	}
 }
@@ -84,14 +72,74 @@ probe module( "fat" ).function( "fat_file_release" ) {
 	}
 }
 
-probe module( "fat" ).function( "fat_alloc_inode" ) {
+probe module( "fat" ).function( "fat_generic_ioctl" ) {
 	if ( mode == "debug" ) {
-		println( "fat_alloc_inode" )
+		println( "fat_generic_ioctl" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_alloc_inode" )
+			s2e_message( "fat_generic_ioctl" )
 		} else {
-			@ops_super_alloc_inode( $sb )
+			@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+		}
+	}
+}
+
+probe module( "fat" ).function( "fat_getattr" ) {
+	if ( mode == "debug" ) {
+		println( "fat_getattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "fat_getattr" )
+		} else {
+			@ops_inode_getattr( $mnt, $dentry, $stat )
+		}
+	}
+}
+
+probe module( "fat" ).function( "fat_put_super" ) {
+	if ( mode == "debug" ) {
+		println( "fat_put_super" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "fat_put_super" )
+		} else {
+			@ops_super_put_super( $sb )
+		}
+	}
+}
+
+probe module( "fat" ).function( "fat_readdir" ) {
+	if ( mode == "debug" ) {
+		println( "fat_readdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "fat_readdir" )
+		} else {
+			@ops_file_iterate( $file, $ctx )
+		}
+	}
+}
+
+probe module( "fat" ).function( "fat_remount" ) {
+	if ( mode == "debug" ) {
+		println( "fat_remount" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "fat_remount" )
+		} else {
+			@ops_super_remount_fs( $sb, $flags, $data )
+		}
+	}
+}
+
+probe module( "fat" ).function( "fat_setattr" ) {
+	if ( mode == "debug" ) {
+		println( "fat_setattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "fat_setattr" )
+		} else {
+			@ops_inode_setattr( $dentry, $attr )
 		}
 	}
 }
@@ -120,18 +168,6 @@ probe module( "fat" ).function( "fat_statfs" ) {
 	}
 }
 
-probe module( "fat" ).function( "fat_put_super" ) {
-	if ( mode == "debug" ) {
-		println( "fat_put_super" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_put_super" )
-		} else {
-			@ops_super_put_super( $sb )
-		}
-	}
-}
-
 probe module( "fat" ).function( "fat_write_inode" ) {
 	if ( mode == "debug" ) {
 		println( "fat_write_inode" )
@@ -144,51 +180,15 @@ probe module( "fat" ).function( "fat_write_inode" ) {
 	}
 }
 
-probe module( "fat" ).function( "fat_evict_inode" ) {
-	if ( mode == "debug" ) {
-		println( "fat_evict_inode" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_evict_inode" )
-		} else {
-			@ops_super_evict_inode( $inode )
-		}
-	}
-}
-
-probe module( "fat" ).function( "fat_remount" ) {
-	if ( mode == "debug" ) {
-		println( "fat_remount" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_remount" )
-		} else {
-			@ops_super_remount_fs( $sb, $flags, $data )
-		}
-	}
-}
-
-probe module( "fat" ).function( "fat_destroy_inode" ) {
-	if ( mode == "debug" ) {
-		println( "fat_destroy_inode" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "fat_destroy_inode" )
-		} else {
-			@ops_super_destroy_inode( $inode )
-		}
-	}
-}
-
 /*
  * file;fsync=fat_file_fsync
  * file;llseek=generic_file_llseek
- * file;llseek=generic_file_llseek
- * file;read=generic_read_dir
+ * file;read=do_sync_read
+ * file;write=do_sync_write
  * file;aio_read=generic_file_aio_read
  * file;aio_write=generic_file_aio_write
+ * file;llseek=generic_file_llseek
  * file;mmap=generic_file_mmap
- * file;write=do_sync_write
- * file;read=do_sync_read
  * file;splice_read=generic_file_splice_read
+ * file;read=generic_read_dir
  */

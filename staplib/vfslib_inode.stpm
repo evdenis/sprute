@@ -14,7 +14,7 @@
 	@make_inode_concolic( @inode )
 %)
 
-@define ops_inode_get_acl( inode, var )
+@define ops_inode_get_acl( inode, type )
 %(
 	@make_inode_concolic( @inode )
 %)
@@ -29,7 +29,7 @@
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_create( inode, dentry, omode, flags )
+@define ops_inode_create( inode, dentry, omode, want_excl )
 %(
 	@make_inode_concolic( @inode )
 	@make_dentry_concolic( @dentry )
@@ -48,7 +48,7 @@
 	@make_dentry_concolic( @dentry )
 %)
 
-@define ops_inode_symlink( inode, dentry, symlink )
+@define ops_inode_symlink( inode, dentry, oldname )
 %(
 	@make_inode_concolic( @inode )
 	@make_dentry_concolic( @dentry )
@@ -125,5 +125,11 @@
 	@make_inode_concolic( @inode )
 	@make_dentry_concolic( @dentry )
 	@make_file_concolic( @file )
+%)
+
+@define ops_inode_tmpfile( inode, dentry, mode )
+%(
+	@make_inode_concolic( @inode )
+	@make_dentry_concolic( @dentry )
 %)
 

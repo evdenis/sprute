@@ -1,61 +1,25 @@
 global mode="release"
 
-probe module( "vfat" ).function( "vfat_rmdir" ) {
+probe module( "vfat" ).function( "vfat_cmp" ) {
 	if ( mode == "debug" ) {
-		println( "vfat_rmdir" )
+		println( "vfat_cmp" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_rmdir" )
+			s2e_message( "vfat_cmp" )
 		} else {
-			@ops_inode_rmdir( $dir, $dentry )
+			@ops_dentry_d_compare( $parent, $dentry, $len, $str, $name )
 		}
 	}
 }
 
-probe module( "vfat" ).function( "vfat_lookup" ) {
+probe module( "vfat" ).function( "vfat_cmpi" ) {
 	if ( mode == "debug" ) {
-		println( "vfat_lookup" )
+		println( "vfat_cmpi" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_lookup" )
+			s2e_message( "vfat_cmpi" )
 		} else {
-			@ops_inode_lookup( $dir, $dentry, $flags )
-		}
-	}
-}
-
-probe module( "vfat" ).function( "vfat_unlink" ) {
-	if ( mode == "debug" ) {
-		println( "vfat_unlink" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_unlink" )
-		} else {
-			@ops_inode_unlink( $dir, $dentry )
-		}
-	}
-}
-
-probe module( "vfat" ).function( "vfat_rename" ) {
-	if ( mode == "debug" ) {
-		println( "vfat_rename" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_rename" )
-		} else {
-			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
-		}
-	}
-}
-
-probe module( "vfat" ).function( "vfat_mkdir" ) {
-	if ( mode == "debug" ) {
-		println( "vfat_mkdir" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_mkdir" )
-		} else {
-			@ops_inode_mkdir( $dir, $dentry, $mode )
+			@ops_dentry_d_compare( $parent, $dentry, $len, $str, $name )
 		}
 	}
 }
@@ -72,18 +36,6 @@ probe module( "vfat" ).function( "vfat_create" ) {
 	}
 }
 
-probe module( "vfat" ).function( "vfat_revalidate" ) {
-	if ( mode == "debug" ) {
-		println( "vfat_revalidate" )
-	} else {
-		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_revalidate" )
-		} else {
-			@ops_dentry_d_revalidate( $dentry, $flags )
-		}
-	}
-}
-
 probe module( "vfat" ).function( "vfat_hash" ) {
 	if ( mode == "debug" ) {
 		println( "vfat_hash" )
@@ -91,7 +43,7 @@ probe module( "vfat" ).function( "vfat_hash" ) {
 		if ( mode == "s2e_debug" ) {
 			s2e_message( "vfat_hash" )
 		} else {
-			@ops_dentry_d_hash( $dentry, $inode, $qstr )
+			@ops_dentry_d_hash( $dentry, $qstr )
 		}
 	}
 }
@@ -103,7 +55,55 @@ probe module( "vfat" ).function( "vfat_hashi" ) {
 		if ( mode == "s2e_debug" ) {
 			s2e_message( "vfat_hashi" )
 		} else {
-			@ops_dentry_d_hash( $dentry, $inode, $qstr )
+			@ops_dentry_d_hash( $dentry, $qstr )
+		}
+	}
+}
+
+probe module( "vfat" ).function( "vfat_lookup" ) {
+	if ( mode == "debug" ) {
+		println( "vfat_lookup" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "vfat_lookup" )
+		} else {
+			@ops_inode_lookup( $dir, $dentry, $flags )
+		}
+	}
+}
+
+probe module( "vfat" ).function( "vfat_mkdir" ) {
+	if ( mode == "debug" ) {
+		println( "vfat_mkdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "vfat_mkdir" )
+		} else {
+			@ops_inode_mkdir( $dir, $dentry, $mode )
+		}
+	}
+}
+
+probe module( "vfat" ).function( "vfat_rename" ) {
+	if ( mode == "debug" ) {
+		println( "vfat_rename" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "vfat_rename" )
+		} else {
+			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+		}
+	}
+}
+
+probe module( "vfat" ).function( "vfat_revalidate" ) {
+	if ( mode == "debug" ) {
+		println( "vfat_revalidate" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "vfat_revalidate" )
+		} else {
+			@ops_dentry_d_revalidate( $dentry, $flags )
 		}
 	}
 }
@@ -120,26 +120,26 @@ probe module( "vfat" ).function( "vfat_revalidate_ci" ) {
 	}
 }
 
-probe module( "vfat" ).function( "vfat_cmp" ) {
+probe module( "vfat" ).function( "vfat_rmdir" ) {
 	if ( mode == "debug" ) {
-		println( "vfat_cmp" )
+		println( "vfat_rmdir" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_cmp" )
+			s2e_message( "vfat_rmdir" )
 		} else {
-			@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+			@ops_inode_rmdir( $dir, $dentry )
 		}
 	}
 }
 
-probe module( "vfat" ).function( "vfat_cmpi" ) {
+probe module( "vfat" ).function( "vfat_unlink" ) {
 	if ( mode == "debug" ) {
-		println( "vfat_cmpi" )
+		println( "vfat_unlink" )
 	} else {
 		if ( mode == "s2e_debug" ) {
-			s2e_message( "vfat_cmpi" )
+			s2e_message( "vfat_unlink" )
 		} else {
-			@ops_dentry_d_compare( $parent, $pinode, $dentry, $inode, $len, $str, $name )
+			@ops_inode_unlink( $dir, $dentry )
 		}
 	}
 }
