@@ -65,7 +65,7 @@ sub uniq
    grep { $_ =~ m/=(?<cb>\w+)$/; my $cond = !$seen{$+{cb}?$+{cb}:$_}++; push @ungenerated, $_ if !$cond; $cond } @_;
 }
 
-@operations = uniq(@operations);
+@operations = uniq( sort { my $str1 = $a; my $str2 = $b; $a =~ m/=(?<cb1>\w+)$/; $str1 = $+{cb1} if defined $+{cb1}; $b =~ m/=(?<cb2>\w+)$/; $str2 = $+{cb2} if defined $+{cb2}; $str1 cmp $str2 } @operations );
 
 say "global mode=\"release\"\n";
 

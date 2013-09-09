@@ -341,6 +341,7 @@ while ( $file =~ m/
                               }
                            }
                            @arg_names = uniq(@arg_names);
+                           @arg_names = grep { $_ !~ m/((inode)|(dentry)|(file)|(super))/ } @arg_names;
                            @arg_names = reverse sort {length $a <=> length $b} @arg_names;
                            if (scalar(@arg_names) == 0)
                            {
