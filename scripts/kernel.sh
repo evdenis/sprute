@@ -126,7 +126,7 @@ install_kernel () {
 
 export_buildinfo_from_vm () {
    pushd "$mkimg_shared_folder"
-      local $cache_dir="./cache/v${kversion_str}/"
+      local cache_dir="./cache/v${kversion_str}/"
       mkdir -p "$cache_dir"
       "${ldir}/mod_merge.sh" "$kdir" "${cache_dir}/depdb" &&
       "${ldir}/merge_sprute.sh" "${cache_dir}/depdb" "$kdir" "${cache_dir}/sprute"
