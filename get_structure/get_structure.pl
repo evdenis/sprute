@@ -417,7 +417,7 @@ while ( $file =~ m/
             if ( simple_type($arg_type) ) {
                print "\n" if $flag;
                say "\t//" . $line;
-               say "\ts2e_make_concolic( &\@${sc_struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \"${arg_name}\" )\n";
+               say "\ts2e_make_concolic( &\@${sc_struct_name}->${arg_name}, %{ sizeof( ${arg_type} ) %}, desc . \" ${arg_name}\" )\n";
                $flag = 0;
             } else {
                say "\t//" . $line;
