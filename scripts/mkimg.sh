@@ -107,7 +107,7 @@ timeout 3
 label l${number}
    menu label Debian GNU/Linux, kernel ${version}
    linux /boot/vmlinuz-${version}
-   append ${initrd} root=/dev/sda1 ro"
+   append ${initrd} root=/dev/sda1 ro $( [[ "$vm_type" == "test" ]] && echo "console=ttyAMA0 console=ttyS0" )"
 
       number="$((${number} + 1))"
    done
