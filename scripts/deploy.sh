@@ -15,6 +15,7 @@ packets+=(wget ca-certificates)
 #packets+=(gcc-4.8-plugin-dev) script should install apropriate version of package
 packets+=(python-dev python-six python-pygments python-sphinx graphviz)
 packets+=(dosfstools jfsutils xfsprogs reiserfsprogs)
+packets+=(bonnie++)
 
 
 deploy_debian () {
