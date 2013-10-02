@@ -77,7 +77,7 @@ foreach my $i (@operations) {
       my @query = (
                   'grep',
                   '-PzHoe',
-                  q!'(?s)\b! . $function . q!\s*\K(?<fargs>\((?:(?>[^\(\)]+)|(?&fargs))+\))(?=\s*(?:(?:(?:__(?:acquires|releases|attribute__)\s*(?<margs>\((?:(?>[^\(\)]+)|(?&margs))+\)))|__attribute_const__|CONSTF|\\\\)\s*)*\{)'!,
+                  q!'(?m)\b! . $function . q!\s*\K(?<fargs>\((?:(?>[^\(\)]+)|(?&fargs))+\))(?=\s*(?:(?:(?:__(?:acquires|releases|attribute__)\s*(?<margs>\((?:(?>[^\(\)]+)|(?&margs))+\)))|__attribute_const__|CONSTF|\\\\)\s*)*\{)'!,
                   @module_files
             );
       my $str_query = join(' ', @query);
