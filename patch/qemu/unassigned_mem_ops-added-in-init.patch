@@ -1,0 +1,27 @@
+diff --git a/qemu/memory.c b/qemu/memory.c
+--- a/qemu/memory.c
++++ b/qemu/memory.c
+@@ -797,11 +797,22 @@ static bool memory_region_wrong_endianness(MemoryRegion *mr)
+ #endif
+ }
+ 
++static bool unassigned_mem_accepts(void *opaque, target_phys_addr_t addr,
++                                   unsigned size, bool is_write)
++{
++    return false;
++}
++
++const MemoryRegionOps unassigned_mem_ops = {
++    .valid.accepts = unassigned_mem_accepts,
++    .endianness = DEVICE_NATIVE_ENDIAN,
++};
++
+ void memory_region_init(MemoryRegion *mr,
+                         const char *name,
+                         uint64_t size)
+ {
+-    mr->ops = NULL;
++    mr->ops = &unassigned_mem_ops;
+     mr->parent = NULL;
+     mr->size = int128_make64(size);
+     if (size == UINT64_MAX) {

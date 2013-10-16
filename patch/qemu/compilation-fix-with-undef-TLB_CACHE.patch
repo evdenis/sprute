@@ -1,0 +1,31 @@
+diff --git a/qemu/s2e/S2EExecutionState.cpp b/qemu/s2e/S2EExecutionState.cpp
+--- a/qemu/s2e/S2EExecutionState.cpp
++++ b/qemu/s2e/S2EExecutionState.cpp
+@@ -73,9 +73,11 @@ namespace klee {
+ extern llvm::cl::opt<bool> DebugLogStateMerge;
+ }
+ 
++#ifdef S2E_ENABLE_S2E_TLB
+ namespace {
+ CPUTLBEntry s_cputlb_empty_entry = { -1, -1, -1, -1 };
+ }
++#endif
+ 
+ extern llvm::cl::opt<bool> PrintModeSwitch;
+ extern llvm::cl::opt<bool> PrintForkingStatus;
+@@ -1685,6 +1687,7 @@ bool S2EExecutionState::merge(const ExecutionState &_b)
+     }
+ 
+     // Flush TLB
++#ifdef S2E_ENABLE_S2E_TLB
+     {
+         CPUX86State * cpu = (CPUX86State *) (m_cpuSystemObject->getConcreteStore() - CPU_OFFSET(eip));
+         cpu->current_tb = NULL;
+@@ -1698,6 +1701,7 @@ bool S2EExecutionState::merge(const ExecutionState &_b)
+ 
+         memset (cpu->tb_jmp_cache, 0, TB_JMP_CACHE_SIZE * sizeof (void *));
+     }
++#endif
+ 
+     return true;
+ }
