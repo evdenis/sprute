@@ -122,5 +122,15 @@ foreach my $i (@operations) {
    }
 }
 
+my $end = <<'PROBE';
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
+PROBE
+
+print $end;
+
 say "/*\n * " . join("\n * ", @ungenerated) . "\n */";
 
