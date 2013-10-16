@@ -96,6 +96,11 @@ probe module( "msdos" ).function( "msdos_unlink" ) {
 	}
 }
 
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
 /*
  * inode;getattr=fat_getattr
  * inode;setattr=fat_setattr

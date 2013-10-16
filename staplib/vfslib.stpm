@@ -3,19 +3,19 @@
 	desc = sprintf("inode addr: %p", @inode )
 
 	//umode_t i_mode;
-	s2e_make_concolic( &@inode->i_mode, %{ sizeof( umode_t ) %}, desc . "i_mode" )
+	s2e_make_concolic( &@inode->i_mode, %{ sizeof( umode_t ) %}, desc . " i_mode" )
 
 	//unsigned short i_opflags;
-	s2e_make_concolic( &@inode->i_opflags, %{ sizeof( unsigned short ) %}, desc . "i_opflags" )
+	s2e_make_concolic( &@inode->i_opflags, %{ sizeof( unsigned short ) %}, desc . " i_opflags" )
 
 	//kuid_t i_uid;
-	s2e_make_concolic( &@inode->i_uid, %{ sizeof( kuid_t ) %}, desc . "i_uid" )
+	s2e_make_concolic( &@inode->i_uid, %{ sizeof( kuid_t ) %}, desc . " i_uid" )
 
 	//kgid_t i_gid;
-	s2e_make_concolic( &@inode->i_gid, %{ sizeof( kgid_t ) %}, desc . "i_gid" )
+	s2e_make_concolic( &@inode->i_gid, %{ sizeof( kgid_t ) %}, desc . " i_gid" )
 
 	//unsigned int i_flags;
-	s2e_make_concolic( &@inode->i_flags, %{ sizeof( unsigned int ) %}, desc . "i_flags" )
+	s2e_make_concolic( &@inode->i_flags, %{ sizeof( unsigned int ) %}, desc . " i_flags" )
 
 	//struct posix_acl *i_acl;
 	//struct posix_acl *i_default_acl;
@@ -25,21 +25,21 @@
 	//void *i_security;
 
 	//unsigned long i_ino;
-	s2e_make_concolic( &@inode->i_ino, %{ sizeof( unsigned long ) %}, desc . "i_ino" )
+	s2e_make_concolic( &@inode->i_ino, %{ sizeof( unsigned long ) %}, desc . " i_ino" )
 
 	//union { const unsigned int i_nlink;
-	s2e_make_concolic( &@inode->i_nlink, %{ sizeof( unsigned int ) %}, desc . "i_nlink" )
+	s2e_make_concolic( &@inode->i_nlink, %{ sizeof( unsigned int ) %}, desc . " i_nlink" )
 
 	//unsigned int __i_nlink;
-	s2e_make_concolic( &@inode->__i_nlink, %{ sizeof( unsigned int ) %}, desc . "__i_nlink" )
+	s2e_make_concolic( &@inode->__i_nlink, %{ sizeof( unsigned int ) %}, desc . " __i_nlink" )
 
 	//};
 
 	//dev_t i_rdev;
-	s2e_make_concolic( &@inode->i_rdev, %{ sizeof( dev_t ) %}, desc . "i_rdev" )
+	s2e_make_concolic( &@inode->i_rdev, %{ sizeof( dev_t ) %}, desc . " i_rdev" )
 
 	//loff_t i_size;
-	s2e_make_concolic( &@inode->i_size, %{ sizeof( loff_t ) %}, desc . "i_size" )
+	s2e_make_concolic( &@inode->i_size, %{ sizeof( loff_t ) %}, desc . " i_size" )
 
 	//struct timespec i_atime;
 	//struct timespec i_mtime;
@@ -47,24 +47,24 @@
 	//spinlock_t i_lock;
 
 	//unsigned short i_bytes;
-	s2e_make_concolic( &@inode->i_bytes, %{ sizeof( unsigned short ) %}, desc . "i_bytes" )
+	s2e_make_concolic( &@inode->i_bytes, %{ sizeof( unsigned short ) %}, desc . " i_bytes" )
 
 	//unsigned int i_blkbits;
-	s2e_make_concolic( &@inode->i_blkbits, %{ sizeof( unsigned int ) %}, desc . "i_blkbits" )
+	s2e_make_concolic( &@inode->i_blkbits, %{ sizeof( unsigned int ) %}, desc . " i_blkbits" )
 
 	//blkcnt_t i_blocks;
-	s2e_make_concolic( &@inode->i_blocks, %{ sizeof( blkcnt_t ) %}, desc . "i_blocks" )
+	s2e_make_concolic( &@inode->i_blocks, %{ sizeof( blkcnt_t ) %}, desc . " i_blocks" )
 
 	//seqcount_t i_size_seqcount;
-	s2e_make_concolic( &@inode->i_size_seqcount, %{ sizeof( seqcount_t ) %}, desc . "i_size_seqcount" )
+	s2e_make_concolic( &@inode->i_size_seqcount, %{ sizeof( seqcount_t ) %}, desc . " i_size_seqcount" )
 
 	//unsigned long i_state;
-	s2e_make_concolic( &@inode->i_state, %{ sizeof( unsigned long ) %}, desc . "i_state" )
+	s2e_make_concolic( &@inode->i_state, %{ sizeof( unsigned long ) %}, desc . " i_state" )
 
 	//struct mutex i_mutex;
 
 	//unsigned long dirtied_when;
-	s2e_make_concolic( &@inode->dirtied_when, %{ sizeof( unsigned long ) %}, desc . "dirtied_when" )
+	s2e_make_concolic( &@inode->dirtied_when, %{ sizeof( unsigned long ) %}, desc . " dirtied_when" )
 
 	//struct hlist_node i_hash;
 	//struct list_head i_wb_list;
@@ -75,16 +75,16 @@
 	//};
 
 	//u64 i_version;
-	s2e_make_concolic( &@inode->i_version, %{ sizeof( u64 ) %}, desc . "i_version" )
+	s2e_make_concolic( &@inode->i_version, %{ sizeof( u64 ) %}, desc . " i_version" )
 
 	//atomic_t i_count;
-	s2e_make_concolic( &@inode->i_count, %{ sizeof( atomic_t ) %}, desc . "i_count" )
+	s2e_make_concolic( &@inode->i_count, %{ sizeof( atomic_t ) %}, desc . " i_count" )
 
 	//atomic_t i_dio_count;
-	s2e_make_concolic( &@inode->i_dio_count, %{ sizeof( atomic_t ) %}, desc . "i_dio_count" )
+	s2e_make_concolic( &@inode->i_dio_count, %{ sizeof( atomic_t ) %}, desc . " i_dio_count" )
 
 	//atomic_t i_writecount;
-	s2e_make_concolic( &@inode->i_writecount, %{ sizeof( atomic_t ) %}, desc . "i_writecount" )
+	s2e_make_concolic( &@inode->i_writecount, %{ sizeof( atomic_t ) %}, desc . " i_writecount" )
 
 	//const struct file_operations *i_fop;
 	//struct file_lock *i_flock;
@@ -97,15 +97,15 @@
 	//};
 
 	//__u32 i_generation;
-	s2e_make_concolic( &@inode->i_generation, %{ sizeof( __u32 ) %}, desc . "i_generation" )
+	s2e_make_concolic( &@inode->i_generation, %{ sizeof( __u32 ) %}, desc . " i_generation" )
 
 	//__u32 i_fsnotify_mask;
-	s2e_make_concolic( &@inode->i_fsnotify_mask, %{ sizeof( __u32 ) %}, desc . "i_fsnotify_mask" )
+	s2e_make_concolic( &@inode->i_fsnotify_mask, %{ sizeof( __u32 ) %}, desc . " i_fsnotify_mask" )
 
 	//struct hlist_head i_fsnotify_marks;
 
 	//atomic_t i_readcount;
-	s2e_make_concolic( &@inode->i_readcount, %{ sizeof( atomic_t ) %}, desc . "i_readcount" )
+	s2e_make_concolic( &@inode->i_readcount, %{ sizeof( atomic_t ) %}, desc . " i_readcount" )
 
 	//void *i_private;
 %)
@@ -124,26 +124,26 @@
 	//spinlock_t f_lock;
 
 	//int f_sb_list_cpu;
-	s2e_make_concolic( &@file->f_sb_list_cpu, %{ sizeof( int ) %}, desc . "f_sb_list_cpu" )
+	s2e_make_concolic( &@file->f_sb_list_cpu, %{ sizeof( int ) %}, desc . " f_sb_list_cpu" )
 
 	//atomic_long_t f_count;
-	s2e_make_concolic( &@file->f_count, %{ sizeof( atomic_long_t ) %}, desc . "f_count" )
+	s2e_make_concolic( &@file->f_count, %{ sizeof( atomic_long_t ) %}, desc . " f_count" )
 
 	//unsigned int f_flags;
-	s2e_make_concolic( &@file->f_flags, %{ sizeof( unsigned int ) %}, desc . "f_flags" )
+	s2e_make_concolic( &@file->f_flags, %{ sizeof( unsigned int ) %}, desc . " f_flags" )
 
 	//fmode_t f_mode;
-	s2e_make_concolic( &@file->f_mode, %{ sizeof( fmode_t ) %}, desc . "f_mode" )
+	s2e_make_concolic( &@file->f_mode, %{ sizeof( fmode_t ) %}, desc . " f_mode" )
 
 	//loff_t f_pos;
-	s2e_make_concolic( &@file->f_pos, %{ sizeof( loff_t ) %}, desc . "f_pos" )
+	s2e_make_concolic( &@file->f_pos, %{ sizeof( loff_t ) %}, desc . " f_pos" )
 
 	//struct fown_struct f_owner;
 	//const struct cred *f_cred;
 	//struct file_ra_state f_ra;
 
 	//u64 f_version;
-	s2e_make_concolic( &@file->f_version, %{ sizeof( u64 ) %}, desc . "f_version" )
+	s2e_make_concolic( &@file->f_version, %{ sizeof( u64 ) %}, desc . " f_version" )
 
 	//void *f_security;
 	//void *private_data;
@@ -152,7 +152,7 @@
 	//struct address_space *f_mapping;
 
 	//unsigned long f_mnt_write_state;
-	s2e_make_concolic( &@file->f_mnt_write_state, %{ sizeof( unsigned long ) %}, desc . "f_mnt_write_state" )
+	s2e_make_concolic( &@file->f_mnt_write_state, %{ sizeof( unsigned long ) %}, desc . " f_mnt_write_state" )
 
 %)
 
@@ -161,10 +161,10 @@
 	desc = sprintf("dentry addr: %p", @dentry )
 
 	//unsigned int d_flags;
-	s2e_make_concolic( &@dentry->d_flags, %{ sizeof( unsigned int ) %}, desc . "d_flags" )
+	s2e_make_concolic( &@dentry->d_flags, %{ sizeof( unsigned int ) %}, desc . " d_flags" )
 
 	//seqcount_t d_seq;
-	s2e_make_concolic( &@dentry->d_seq, %{ sizeof( seqcount_t ) %}, desc . "d_seq" )
+	s2e_make_concolic( &@dentry->d_seq, %{ sizeof( seqcount_t ) %}, desc . " d_seq" )
 
 	//struct hlist_bl_node d_hash;
 	//struct dentry *d_parent;
@@ -172,14 +172,14 @@
 	//struct inode *d_inode;
 
 	//unsigned char d_iname[DNAME_INLINE_LEN];
-	s2e_make_concolic( &@dentry->d_iname, %{ sizeof( unsigned char [DNAME_INLINE_LEN] ) %}, desc . "d_iname" )
+	s2e_make_concolic( &@dentry->d_iname, %{ sizeof( unsigned char [DNAME_INLINE_LEN] ) %}, desc . " d_iname" )
 
 	//struct lockref d_lockref;
 	//const struct dentry_operations *d_op;
 	//struct super_block *d_sb;
 
 	//unsigned long d_time;
-	s2e_make_concolic( &@dentry->d_time, %{ sizeof( unsigned long ) %}, desc . "d_time" )
+	s2e_make_concolic( &@dentry->d_time, %{ sizeof( unsigned long ) %}, desc . " d_time" )
 
 	//void *d_fsdata;
 	//struct list_head d_lru;
@@ -197,16 +197,16 @@
 	//struct list_head s_list;
 
 	//dev_t s_dev;
-	s2e_make_concolic( &@super->s_dev, %{ sizeof( dev_t ) %}, desc . "s_dev" )
+	s2e_make_concolic( &@super->s_dev, %{ sizeof( dev_t ) %}, desc . " s_dev" )
 
 	//unsigned char s_blocksize_bits;
-	s2e_make_concolic( &@super->s_blocksize_bits, %{ sizeof( unsigned char ) %}, desc . "s_blocksize_bits" )
+	s2e_make_concolic( &@super->s_blocksize_bits, %{ sizeof( unsigned char ) %}, desc . " s_blocksize_bits" )
 
 	//unsigned long s_blocksize;
-	s2e_make_concolic( &@super->s_blocksize, %{ sizeof( unsigned long ) %}, desc . "s_blocksize" )
+	s2e_make_concolic( &@super->s_blocksize, %{ sizeof( unsigned long ) %}, desc . " s_blocksize" )
 
 	//loff_t s_maxbytes;
-	s2e_make_concolic( &@super->s_maxbytes, %{ sizeof( loff_t ) %}, desc . "s_maxbytes" )
+	s2e_make_concolic( &@super->s_maxbytes, %{ sizeof( loff_t ) %}, desc . " s_maxbytes" )
 
 	//struct file_system_type *s_type;
 	//const struct super_operations *s_op;
@@ -215,19 +215,19 @@
 	//const struct export_operations *s_export_op;
 
 	//unsigned long s_flags;
-	s2e_make_concolic( &@super->s_flags, %{ sizeof( unsigned long ) %}, desc . "s_flags" )
+	s2e_make_concolic( &@super->s_flags, %{ sizeof( unsigned long ) %}, desc . " s_flags" )
 
 	//unsigned long s_magic;
-	s2e_make_concolic( &@super->s_magic, %{ sizeof( unsigned long ) %}, desc . "s_magic" )
+	s2e_make_concolic( &@super->s_magic, %{ sizeof( unsigned long ) %}, desc . " s_magic" )
 
 	//struct dentry *s_root;
 	//struct rw_semaphore s_umount;
 
 	//int s_count;
-	s2e_make_concolic( &@super->s_count, %{ sizeof( int ) %}, desc . "s_count" )
+	s2e_make_concolic( &@super->s_count, %{ sizeof( int ) %}, desc . " s_count" )
 
 	//atomic_t s_active;
-	s2e_make_concolic( &@super->s_active, %{ sizeof( atomic_t ) %}, desc . "s_active" )
+	s2e_make_concolic( &@super->s_active, %{ sizeof( atomic_t ) %}, desc . " s_active" )
 
 	//void *s_security;
 	//const struct xattr_handler **s_xattr;
@@ -239,13 +239,13 @@
 	//struct list_head s_dentry_lru;
 
 	//int s_nr_dentry_unused;
-	s2e_make_concolic( &@super->s_nr_dentry_unused, %{ sizeof( int ) %}, desc . "s_nr_dentry_unused" )
+	s2e_make_concolic( &@super->s_nr_dentry_unused, %{ sizeof( int ) %}, desc . " s_nr_dentry_unused" )
 
 	//spinlock_t s_inode_lru_lock ____cacheline_aligned_in_smp;
 	//struct list_head s_inode_lru;
 
 	//int s_nr_inodes_unused;
-	s2e_make_concolic( &@super->s_nr_inodes_unused, %{ sizeof( int ) %}, desc . "s_nr_inodes_unused" )
+	s2e_make_concolic( &@super->s_nr_inodes_unused, %{ sizeof( int ) %}, desc . " s_nr_inodes_unused" )
 
 	//struct block_device *s_bdev;
 	//struct backing_dev_info *s_bdi;
@@ -255,21 +255,21 @@
 	//struct sb_writers s_writers;
 
 	//char s_id[32];
-	s2e_make_concolic( &@super->s_id, %{ sizeof( char [32] ) %}, desc . "s_id" )
+	s2e_make_concolic( &@super->s_id, %{ sizeof( char [32] ) %}, desc . " s_id" )
 
 	//u8 s_uuid[16];
-	s2e_make_concolic( &@super->s_uuid, %{ sizeof( u8 [16] ) %}, desc . "s_uuid" )
+	s2e_make_concolic( &@super->s_uuid, %{ sizeof( u8 [16] ) %}, desc . " s_uuid" )
 
 	//void *s_fs_info;
 
 	//unsigned int s_max_links;
-	s2e_make_concolic( &@super->s_max_links, %{ sizeof( unsigned int ) %}, desc . "s_max_links" )
+	s2e_make_concolic( &@super->s_max_links, %{ sizeof( unsigned int ) %}, desc . " s_max_links" )
 
 	//fmode_t s_mode;
-	s2e_make_concolic( &@super->s_mode, %{ sizeof( fmode_t ) %}, desc . "s_mode" )
+	s2e_make_concolic( &@super->s_mode, %{ sizeof( fmode_t ) %}, desc . " s_mode" )
 
 	//u32 s_time_gran;
-	s2e_make_concolic( &@super->s_time_gran, %{ sizeof( u32 ) %}, desc . "s_time_gran" )
+	s2e_make_concolic( &@super->s_time_gran, %{ sizeof( u32 ) %}, desc . " s_time_gran" )
 
 	//struct mutex s_vfs_rename_mutex;
 	//char *s_subtype;
@@ -277,15 +277,15 @@
 	//const struct dentry_operations *s_d_op;
 
 	//int cleancache_poolid;
-	s2e_make_concolic( &@super->cleancache_poolid, %{ sizeof( int ) %}, desc . "cleancache_poolid" )
+	s2e_make_concolic( &@super->cleancache_poolid, %{ sizeof( int ) %}, desc . " cleancache_poolid" )
 
 	//struct shrinker s_shrink;
 
 	//atomic_long_t s_remove_count;
-	s2e_make_concolic( &@super->s_remove_count, %{ sizeof( atomic_long_t ) %}, desc . "s_remove_count" )
+	s2e_make_concolic( &@super->s_remove_count, %{ sizeof( atomic_long_t ) %}, desc . " s_remove_count" )
 
 	//int s_readonly_remount;
-	s2e_make_concolic( &@super->s_readonly_remount, %{ sizeof( int ) %}, desc . "s_readonly_remount" )
+	s2e_make_concolic( &@super->s_readonly_remount, %{ sizeof( int ) %}, desc . " s_readonly_remount" )
 
 %)
 

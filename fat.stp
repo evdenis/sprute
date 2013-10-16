@@ -180,6 +180,11 @@ probe module( "fat" ).function( "fat_write_inode" ) {
 	}
 }
 
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
 /*
  * file;fsync=fat_file_fsync
  * file;llseek=generic_file_llseek

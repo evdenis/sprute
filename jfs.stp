@@ -492,6 +492,11 @@ probe module( "jfs" ).function( "jfs_write_inode" ) {
 	}
 }
 
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
 /*
  * file;llseek=generic_file_llseek
  * file;fsync=jfs_fsync

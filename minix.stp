@@ -240,6 +240,11 @@ probe module( "minix" ).function( "minix_write_inode" ) {
 	}
 }
 
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
 /*
  * file;fsync=generic_file_fsync
  * file;llseek=generic_file_llseek
