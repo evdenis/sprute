@@ -1,0 +1,474 @@
+global mode="release"
+
+probe module( "reiserfs" ).function( "reiserfs_alloc_inode" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_alloc_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_alloc_inode" )
+		} else {
+			@ops_super_alloc_inode( $sb )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_create" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_create" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_create" )
+		} else {
+			@ops_inode_create( $dir, $dentry, $mode, $excl )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_destroy_inode" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_destroy_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_destroy_inode" )
+		} else {
+			@ops_super_destroy_inode( $inode )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_dir_fsync" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_dir_fsync" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_dir_fsync" )
+		} else {
+			@ops_file_fsync( $filp, $start, $end, $datasync )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_dirty_inode" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_dirty_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_dirty_inode" )
+		} else {
+			@ops_super_dirty_inode( $inode, $flags )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_evict_inode" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_evict_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_evict_inode" )
+		} else {
+			@ops_super_evict_inode( $inode )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_file_open" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_file_open" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_file_open" )
+		} else {
+			@ops_file_open( $inode, $file )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_file_release" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_file_release" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_file_release" )
+		} else {
+			@ops_file_release( $inode, $filp )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_freeze" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_freeze" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_freeze" )
+		} else {
+			@ops_super_freeze_fs( $s )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_get_acl" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_get_acl" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_get_acl" )
+		} else {
+			@ops_inode_get_acl( $inode, $type )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_getxattr" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_getxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_getxattr" )
+		} else {
+			@ops_inode_getxattr( $dentry, $name, $buffer, $size )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_ioctl" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_ioctl" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_ioctl" )
+		} else {
+			@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_link" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_link" )
+		} else {
+			@ops_inode_link( $old_dentry, $dir, $dentry )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_listxattr" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_listxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_listxattr" )
+		} else {
+			@ops_inode_listxattr( $dentry, $buffer, $size )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_lookup" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_lookup" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_lookup" )
+		} else {
+			@ops_inode_lookup( $dir, $dentry, $flags )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_mkdir" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_mkdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_mkdir" )
+		} else {
+			@ops_inode_mkdir( $dir, $dentry, $mode )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_mknod" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_mknod" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_mknod" )
+		} else {
+			@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_permission" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_permission" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_permission" )
+		} else {
+			@ops_inode_permission( $inode, $mask )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_put_super" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_put_super" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_put_super" )
+		} else {
+			@ops_super_put_super( $s )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_quota_read" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_quota_read" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_quota_read" )
+		} else {
+			@ops_super_quota_read( $sb, $type, $data, $len, $off )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_quota_write" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_quota_write" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_quota_write" )
+		} else {
+			@ops_super_quota_write( $sb, $type, $data, $len, $off )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_readdir" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_readdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_readdir" )
+		} else {
+			@ops_file_iterate( $file, $ctx )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_remount" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_remount" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_remount" )
+		} else {
+			@ops_super_remount_fs( $s, $mount_flags, $arg )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_removexattr" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_removexattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_removexattr" )
+		} else {
+			@ops_inode_removexattr( $dentry, $name )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_rename" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_rename" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_rename" )
+		} else {
+			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_rmdir" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_rmdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_rmdir" )
+		} else {
+			@ops_inode_rmdir( $dir, $dentry )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_setattr" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_setattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_setattr" )
+		} else {
+			@ops_inode_setattr( $dentry, $attr )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_setxattr" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_setxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_setxattr" )
+		} else {
+			@ops_inode_setxattr( $dentry, $name, $value, $size, $flags )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_show_options" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_show_options" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_show_options" )
+		} else {
+			@ops_super_show_options( $seq, $root )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_statfs" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_statfs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_statfs" )
+		} else {
+			@ops_super_statfs( $dentry, $buf )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_symlink" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_symlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_symlink" )
+		} else {
+			@ops_inode_symlink( $parent_dir, $dentry, $symname )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_sync_file" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_sync_file" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_sync_file" )
+		} else {
+			@ops_file_fsync( $filp, $start, $end, $datasync )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_sync_fs" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_sync_fs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_sync_fs" )
+		} else {
+			@ops_super_sync_fs( $s, $wait )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_unfreeze" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_unfreeze" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_unfreeze" )
+		} else {
+			@ops_super_unfreeze_fs( $s )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_unlink" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_unlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_unlink" )
+		} else {
+			@ops_inode_unlink( $dir, $dentry )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "reiserfs_write_inode" ) {
+	if ( mode == "debug" ) {
+		println( "reiserfs_write_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "reiserfs_write_inode" )
+		} else {
+			@ops_super_write_inode( $inode, $wbc )
+		}
+	}
+}
+
+probe module( "reiserfs" ).function( "xattr_hide_revalidate" ) {
+	if ( mode == "debug" ) {
+		println( "xattr_hide_revalidate" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "xattr_hide_revalidate" )
+		} else {
+			@ops_dentry_d_revalidate( $dentry, $flags )
+		}
+	}
+}
+
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
+/*
+ * file;llseek=generic_file_llseek
+ * inode;get_acl=reiserfs_get_acl
+ * inode;getxattr=reiserfs_getxattr
+ * file;unlocked_ioctl=reiserfs_ioctl
+ * inode;listxattr=reiserfs_listxattr
+ * inode;permission=reiserfs_permission
+ * inode;removexattr=reiserfs_removexattr
+ * inode;setattr=reiserfs_setattr
+ * inode;setxattr=reiserfs_setxattr
+ * file;read=do_sync_read
+ * file;write=do_sync_write
+ * file;aio_read=generic_file_aio_read
+ * file;aio_write=generic_file_aio_write
+ * file;llseek=generic_file_llseek
+ * file;mmap=generic_file_mmap
+ * file;splice_read=generic_file_splice_read
+ * file;splice_write=generic_file_splice_write
+ * file;read=generic_read_dir
+ * inode;readlink=generic_readlink
+ * inode;follow_link=page_follow_link_light
+ * inode;put_link=page_put_link
+ */

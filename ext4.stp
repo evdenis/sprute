@@ -1,0 +1,593 @@
+global mode="release"
+
+probe module( "ext4" ).function( "bdev_try_to_free_page" ) {
+	if ( mode == "debug" ) {
+		println( "bdev_try_to_free_page" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "bdev_try_to_free_page" )
+		} else {
+			@ops_super_bdev_try_to_free_page( $sb, $page, $wait )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_alloc_inode" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_alloc_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_alloc_inode" )
+		} else {
+			@ops_super_alloc_inode( $sb )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_create" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_create" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_create" )
+		} else {
+			@ops_inode_create( $dir, $dentry, $mode, $excl )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_destroy_inode" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_destroy_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_destroy_inode" )
+		} else {
+			@ops_super_destroy_inode( $inode )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_dir_llseek" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_dir_llseek" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_dir_llseek" )
+		} else {
+			@ops_file_llseek( $file, $offset, $whence )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_dirty_inode" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_dirty_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_dirty_inode" )
+		} else {
+			@ops_super_dirty_inode( $inode, $flags )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_drop_inode" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_drop_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_drop_inode" )
+		} else {
+			@ops_super_drop_inode( $inode )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_evict_inode" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_evict_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_evict_inode" )
+		} else {
+			@ops_super_evict_inode( $inode )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_fallocate" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_fallocate" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_fallocate" )
+		} else {
+			@ops_file_fallocate( $file, $mode, $offset, $len )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_fiemap" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_fiemap" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_fiemap" )
+		} else {
+			@ops_inode_fiemap( $inode, $fieinfo, $start, $len )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_file_mmap" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_file_mmap" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_file_mmap" )
+		} else {
+			@ops_file_mmap( $file, $vma )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_file_open" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_file_open" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_file_open" )
+		} else {
+			@ops_file_open( $inode, $filp )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_file_write" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_file_write" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_file_write" )
+		} else {
+			@ops_file_aio_write( $iocb, $iov, $nr_segs, $pos )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_follow_link" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_follow_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_follow_link" )
+		} else {
+			@ops_inode_follow_link( $dentry, $nd )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_freeze" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_freeze" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_freeze" )
+		} else {
+			@ops_super_freeze_fs( $sb )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_get_acl" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_get_acl" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_get_acl" )
+		} else {
+			@ops_inode_get_acl( $inode, $type )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_getattr" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_getattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_getattr" )
+		} else {
+			@ops_inode_getattr( $mnt, $dentry, $stat )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_ioctl" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_ioctl" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_ioctl" )
+		} else {
+			@ops_file_unlocked_ioctl( $filp, $cmd, $arg )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_link" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_link" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_link" )
+		} else {
+			@ops_inode_link( $old_dentry, $dir, $dentry )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_listxattr" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_listxattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_listxattr" )
+		} else {
+			@ops_inode_listxattr( $dentry, $buffer, $size )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_llseek" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_llseek" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_llseek" )
+		} else {
+			@ops_file_llseek( $file, $offset, $whence )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_lookup" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_lookup" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_lookup" )
+		} else {
+			@ops_inode_lookup( $dir, $dentry, $flags )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_mb_seq_groups_open" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_mb_seq_groups_open" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_mb_seq_groups_open" )
+		} else {
+			@ops_file_open( $inode, $file )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_mkdir" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_mkdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_mkdir" )
+		} else {
+			@ops_inode_mkdir( $dir, $dentry, $mode )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_mknod" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_mknod" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_mknod" )
+		} else {
+			@ops_inode_mknod( $dir, $dentry, $mode, $rdev )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_put_super" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_put_super" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_put_super" )
+		} else {
+			@ops_super_put_super( $sb )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_quota_read" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_quota_read" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_quota_read" )
+		} else {
+			@ops_super_quota_read( $sb, $type, $data, $len, $off )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_quota_write" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_quota_write" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_quota_write" )
+		} else {
+			@ops_super_quota_write( $sb, $type, $data, $len, $off )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_readdir" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_readdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_readdir" )
+		} else {
+			@ops_file_iterate( $file, $ctx )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_release_dir" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_release_dir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_release_dir" )
+		} else {
+			@ops_file_release( $inode, $filp )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_release_file" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_release_file" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_release_file" )
+		} else {
+			@ops_file_release( $inode, $filp )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_remount" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_remount" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_remount" )
+		} else {
+			@ops_super_remount_fs( $sb, $flags, $data )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_rename" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_rename" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_rename" )
+		} else {
+			@ops_inode_rename( $old_dir, $old_dentry, $new_dir, $new_dentry )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_rmdir" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_rmdir" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_rmdir" )
+		} else {
+			@ops_inode_rmdir( $dir, $dentry )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_setattr" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_setattr" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_setattr" )
+		} else {
+			@ops_inode_setattr( $dentry, $attr )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_show_options" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_show_options" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_show_options" )
+		} else {
+			@ops_super_show_options( $seq, $root )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_statfs" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_statfs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_statfs" )
+		} else {
+			@ops_super_statfs( $dentry, $buf )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_symlink" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_symlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_symlink" )
+		} else {
+			@ops_inode_symlink( $dir, $dentry, $symname )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_sync_file" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_sync_file" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_sync_file" )
+		} else {
+			@ops_file_fsync( $file, $start, $end, $datasync )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_sync_fs" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_sync_fs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_sync_fs" )
+		} else {
+			@ops_super_sync_fs( $sb, $wait )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_sync_fs_nojournal" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_sync_fs_nojournal" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_sync_fs_nojournal" )
+		} else {
+			@ops_super_sync_fs( $sb, $wait )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_tmpfile" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_tmpfile" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_tmpfile" )
+		} else {
+			@ops_inode_tmpfile( $dir, $dentry, $mode )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_unfreeze" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_unfreeze" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_unfreeze" )
+		} else {
+			@ops_super_unfreeze_fs( $sb )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_unlink" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_unlink" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_unlink" )
+		} else {
+			@ops_inode_unlink( $dir, $dentry )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "ext4_write_inode" ) {
+	if ( mode == "debug" ) {
+		println( "ext4_write_inode" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "ext4_write_inode" )
+		} else {
+			@ops_super_write_inode( $inode, $wbc )
+		}
+	}
+}
+
+probe module( "ext4" ).function( "options_open_fs" ) {
+	if ( mode == "debug" ) {
+		println( "options_open_fs" )
+	} else {
+		if ( mode == "s2e_debug" ) {
+			s2e_message( "options_open_fs" )
+		} else {
+			@ops_file_open( $inode, $file )
+		}
+	}
+}
+
+
+probe end {
+   s2e_kill_state(0, "Branch finished\n")
+}
+
+/*
+ * inode;fiemap=ext4_fiemap
+ * inode;get_acl=ext4_get_acl
+ * file;unlocked_ioctl=ext4_ioctl
+ * inode;listxattr=ext4_listxattr
+ * inode;listxattr=ext4_listxattr
+ * inode;setattr=ext4_setattr
+ * inode;setattr=ext4_setattr
+ * file;fsync=ext4_sync_file
+ * inode;getxattr=generic_getxattr
+ * inode;getxattr=generic_getxattr
+ * inode;removexattr=generic_removexattr
+ * inode;removexattr=generic_removexattr
+ * inode;setxattr=generic_setxattr
+ * inode;setxattr=generic_setxattr
+ * file;llseek=seq_lseek
+ * file;read=seq_read
+ * file;read=do_sync_read
+ * file;write=do_sync_write
+ * file;aio_read=generic_file_aio_read
+ * file;splice_read=generic_file_splice_read
+ * file;splice_write=generic_file_splice_write
+ * inode;getxattr=generic_getxattr
+ * file;read=generic_read_dir
+ * inode;readlink=generic_readlink
+ * inode;removexattr=generic_removexattr
+ * inode;setxattr=generic_setxattr
+ * inode;follow_link=page_follow_link_light
+ * inode;put_link=page_put_link
+ * file;llseek=seq_lseek
+ * file;read=seq_read
+ * file;release=seq_release
+ * file;release=single_release
+ */

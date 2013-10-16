@@ -25,7 +25,7 @@ do
 	"${ldir}/get_structure.pl" --path "${kdir}/include/" --name "${i}_operations" -e > "${output}/vfslib_${i}.stpm"
 done
 
-for i in fat msdos vfat minix jfs
+for i in fat msdos vfat minix jfs xfs ext4 reiserfs
 do
    "${ldir}/gen_rules.pl" --path "$kdir" --cbdir "$cbdir" --depdb "$depdb" --module "$i" > "${ldir}/../${i}.stp"
 done
