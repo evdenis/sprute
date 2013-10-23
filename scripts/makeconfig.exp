@@ -146,6 +146,8 @@ configuration {
    DEBUG_FS                      yes
    MODULES                       yes
       MODULE_UNLOAD                 yes
+
+   PANIC_ON_OOPS                 yes
 }
 
 #   -re {(\[(([YyNnMm\?\/]+)|((0x)?\d+)|((\(none\))|(\/sbin\/hotplug)|(rtc0)|(utf8)|(iso8859-1)))?\]|choice\[1(-\d+)?\??\]:)(\s+\(NEW\))?\s*$} {
