@@ -48,7 +48,7 @@ for my $file (@defn_files) {
                         )
                         $
                      /gmx ) {
-      my @modules = $+{modules} =~ m/[\w_-]+(?=\.o)/g;
+      my @modules = $+{modules} =~ m/[\w-]+(?=\.o)/g;
       for my $module (@modules) {
          my @deps;
 
