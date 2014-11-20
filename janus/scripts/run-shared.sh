@@ -1,12 +1,13 @@
 #!/bin/bash -x
 
-ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#ldir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#
+#source "${ldir}/lib/common.sh"
+#
+#load_default_config || exit 1
 
-source "${ldir}/lib/common.sh"
-
-load_default_config || exit 1
-
-img_file="${1:-$mkimg_name}"
+img_file="$1"
+host_shared_folder="$2"
 
 mkdir -p "$host_shared_folder"
 
