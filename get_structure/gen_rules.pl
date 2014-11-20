@@ -2,38 +2,40 @@
 
 use strict;
 use warnings;
-use 5.10.0;
 use feature qw(say);
 
 use File::Slurp qw(read_file);
-#use List::MoreUtils qw(uniq);
 use Getopt::Long qw(:config gnu_getopt);
 
-#TODO: module dependence
 
-my $path = '';
-my $depdb = '';
-my $cbdir = '';
+my $path   = '';
+my $depdb  = '';
+my $cbdir  = '';
 my $module = '';
 
 GetOptions(
-   'path|p=s' => \$path,
-   'depdb|d=s' => \$depdb,
-   'cbdir|c=s' => \$cbdir,
+   'path|p=s'   => \$path,
+   'depdb|d=s'  => \$depdb,
+   'cbdir|c=s'  => \$cbdir,
    'module|m=s' => \$module,
 ) or die "Incorrect usage!\n";
 
-die "Path, depdb, cbdir and module should be set.\n" if ( ! ( $path and $module and $depdb and $cbdir ) );
-die "${path} - is not a path to kernel sources dir.\n" if (! -f "${path}/Kbuild");
-die "Can't read ${depdb}\n" if (! -r $depdb);
-die "There is no such directory ${cbdir}\n" if (! -d $cbdir);
-die "Can't read ${module} in ${cbdir}\n" if (! -r "${cbdir}/${module}.sprute");
+die "Path, depdb, cbdir and module should be set.\n"
+   unless $path and $module and $depdb and $cbdir;
+die "${path} - is not a path to kernel sources dir.\n"
+   unless -f "${path}/Kbuild";
+die "Can't read ${depdb}\n"
+   unless -r $depdb;
+die "There is no such directory ${cbdir}\n"
+   unless -d $cbdir;
+die "Can't read ${module} in ${cbdir}\n"
+   unless -r "${cbdir}/${module}.sprute";
 
-my @modules_files = read_file($depdb, chomp => 1);
 
-my @dbstr = grep(/\/${module}.ko :=/, @modules_files);
+my @dbstr = grep {/\/${module}.ko :=/} read_file($depdb, chomp => 1);
 
-die "Wrong format of ${depdb}: number of ${module}.ko occurences $#dbstr.\n" if ( $#dbstr ne 0 );
+die "Wrong format of ${depdb}: number of ${module}.ko occurences $#dbstr.\n"
+   if $#dbstr ne 0;
 
 sub check_arg_name
 {
