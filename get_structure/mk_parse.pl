@@ -52,8 +52,6 @@ for my $file (@defn_files) {
       for my $module (@modules) {
          my @deps;
 
-         my $saved_pos = pos($data);
-
          while ( $data =~ m/
                               ${module}-(?:y|objs)
                               \s*
@@ -70,15 +68,12 @@ for my $file (@defn_files) {
                               $
                            /gmx ) {
             my $tmp = $+{deps};
-            $tmp =~ s/\n//gm;
             $tmp =~ s/\\//gm;
-            $tmp =~ s/\s+/ /gm;
-            push @deps, ( split / /, $tmp );
+            push @deps, split /\s+/, $tmp;
          }
          if ( @deps ) {
             say $module . ' := ' . join( ' ', @deps );
          }
-         pos($data) = $saved_pos;
       }
    }
 }
