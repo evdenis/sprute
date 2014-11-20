@@ -345,15 +345,15 @@ while ( $file =~ m/
                            @arg_names = reverse sort {length $a <=> length $b} @arg_names;
                            if (scalar(@arg_names) == 0)
                            {
-                              print STDERR "Not able to find argument name for:\n";
-                              print STDERR "structure: $struct_name\n";
-                              print STDERR "operation: $line\n";
-                              print STDERR "argument:  $i\n";
-                              print STDERR "Assigning default name: 'var'\n";
+                              warn "Not able to find argument name for:\n";
+                              warn "structure: $struct_name\n";
+                              warn "operation: $line\n";
+                              warn "argument:  $i\n";
+                              warn "Assigning default name: 'var'\n";
                               push(@arg_names, 'var');
                            }
                            #my @pr_arg_names = preffered_names(@arg_names);
-                           #say STDERR join(' ', @arg_names);
+                           #warn join(' ', @arg_names);
                            $arg_name = $arg_names[0];
                            #$arg_name = $arg_names[int($#arg_names/2)];
                            #$arg_name = $pr_arg_names[0] ? $pr_arg_names[0] : $arg_names[0];

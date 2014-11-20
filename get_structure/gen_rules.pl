@@ -88,9 +88,9 @@ foreach my $i (@operations) {
       if ( $? eq 0 ) {
          my $count =()= $output =~ m/\.c:\(/g;
          if ($count ne 1) {
-            print STDERR "There is more than definition of function ${function}\n";
-            print STDERR "${output}";
-            print STDERR "This function will not be included in stp file.\n";
+            warn "There is more than definition of function ${function}\n";
+            warn "${output}\n";
+            warn "This function will not be included in stp file.\n";
             push @ungenerated, $i;
             next;
          }
