@@ -10,20 +10,20 @@ use File::Slurp qw(read_file);
 use List::MoreUtils qw(uniq);
 use Getopt::Long qw(:config gnu_getopt);
 
-my $path = '';
+my $path        = '';
 my $struct_name = '';
-my $strip = 0;
-my $rem_macro = 0;
+my $strip       = 0;
+my $rem_macro   = 0;
 my $extract_ops = 0;
 my $mark_fields = 0;
 
 GetOptions(
-   'path|p=s' => \$path,
-   'name|n=s' => \$struct_name,
-   'strip|s!' => \$strip,
-   'remove_macro|r!' => \$rem_macro,
+   'path|p=s'              => \$path,
+   'name|n=s'              => \$struct_name,
+   'strip|s!'              => \$strip,
+   'remove_macro|r!'       => \$rem_macro,
    'extract_operations|e!' => \$extract_ops,
-   'mark_fields|m!' => \$mark_fields,
+   'mark_fields|m!'        => \$mark_fields,
 ) or die "Incorrect usage!\n";
 
 #TODO: we should use simple ifdef/endif macro with mark_fields
