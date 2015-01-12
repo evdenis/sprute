@@ -93,7 +93,7 @@ configure_kernel () {
       #yes '' | make oldconfig > /dev/null
       #make silentoldconfig
       make olddefconfig
-      "${ldir}/makeconfig.exp"
+      "${ldir}/makeconfig" "${ldir}/makeconfig.conf" "."
       ret=$?
    popd
 
