@@ -1,0 +1,74 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+
+use autodie;
+use Proc::Daemon;
+use Mojo::UserAgent;
+use Mojo::DOM;
+use List::Util qw/any/;
+use POSIX qw/setsid/;
+
+BEGIN {
+   eval {
+      require Smart::Comments;
+      Smart::Comments->import();
+   }
+}
+
+my $working_dir = $ARGV[0];
+my $daemon = 1;
+my $seconds = 10;
+
+if ($daemon) {
+   my $pid = fork();
+   die "can't fork: $!" unless defined $pid;
+   exit 0 if $pid;
+   setsid();
+   open (STDIN,  '</dev/null');
+   open (STDOUT, '>/dev/null');
+   open (STDERR, '>&STDOUT');
+}
+
+my @kernels = do {
+   opendir ((my $fh), $working_dir);
+   my @contents = readdir $fh;
+   closedir $fh;
+   grep { -f $_ && $_ =~ m/linux-\d\.\d\d\.tar\.xz/ } @contents;
+};
+
+### KERNELS DIRECTORY: $working_dir
+### KERNELS: @kernels
+
+my $kernel_page = 'https://www.kernel.org/';
+$ENV{MOJO_MAX_MESSAGE_SIZE} = 1073741824; # 1GB
+my $ua = Mojo::UserAgent->new(max_redirects => 3);
+
+CHECK:
+my $latest_link = $ua->get($kernel_page)
+                     ->res
+                     ->dom
+                     ->find('#latest_link > a:nth-child(1)')
+                     ->map(attr => 'href')
+                     ->join("\n");
+
+my $name = substr $latest_link, rindex($latest_link, '/') + 1;
+
+### LATEST KERNEL: $name
+
+unless (any { $name eq $_ } @kernels) {
+### DOWNLOADING: $name
+   $ua->get($kernel_page . $latest_link)
+      ->res
+      ->content
+      ->asset
+      ->move_to($name);
+   push @kernels, $name;
+}
+
+if ($daemon) {
+   sleep $seconds;
+   goto CHECK
+}
+
