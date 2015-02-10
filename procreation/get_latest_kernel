@@ -3,12 +3,11 @@
 use warnings;
 use strict;
 
-use autodie;
-use Proc::Daemon;
 use Mojo::UserAgent;
 use Mojo::DOM;
 use List::Util qw/any/;
 use POSIX qw/setsid/;
+use Getopt::Long qw(:config gnu_compat no_bundling no_permute no_getopt_compat);
 
 BEGIN {
    eval {
@@ -17,32 +16,56 @@ BEGIN {
    }
 }
 
-my $working_dir = $ARGV[0];
-my $daemon = 1;
-my $seconds = 10;
+my %config;
+$config{working_dir} = '.';
+$config{daemon} = 0;
+$config{minutes} = 10;
 
-if ($daemon) {
+GetOptions(
+   'daemon|d!'   => \$config{daemon},
+   'minutes|m=i' => \$config{minutes},
+) or die "Wrong command line arguments.\n";
+
+if (@ARGV) {
+   if ($#ARGV==0) {
+      $config{working_dir} = $ARGV[0];
+   } else {
+      die "Wrong command line arguments.\n"
+   }
+}
+
+unless (-d $config{working_dir} && -r _ && -x _) {
+   die "Can't open directory $config{working_dir}\n"
+}
+
+### CONFIGURATION: %config
+
+my @kernels = do {
+   opendir ((my $fh), $config{working_dir});
+   my @contents = readdir $fh;
+   closedir $fh;
+   grep { -f $_ && $_ =~ m/linux-\d\.\d\d\.tar\.xz/ } @contents;
+};
+### KERNELS: @kernels
+
+if ($config{daemon}) {
    my $pid = fork();
-   die "can't fork: $!" unless defined $pid;
-   exit 0 if $pid;
+   die "can't fork: $!"
+      unless defined $pid;
+   if ($pid) {
+      print "$pid\n";
+      exit 0;
+   }
    setsid();
    open (STDIN,  '</dev/null');
    open (STDOUT, '>/dev/null');
    open (STDERR, '>&STDOUT');
 }
 
-my @kernels = do {
-   opendir ((my $fh), $working_dir);
-   my @contents = readdir $fh;
-   closedir $fh;
-   grep { -f $_ && $_ =~ m/linux-\d\.\d\d\.tar\.xz/ } @contents;
-};
-
-### KERNELS DIRECTORY: $working_dir
-### KERNELS: @kernels
 
 my $kernel_page = 'https://www.kernel.org/';
 $ENV{MOJO_MAX_MESSAGE_SIZE} = 1073741824; # 1GB
+
 my $ua = Mojo::UserAgent->new(max_redirects => 3);
 
 CHECK:
@@ -67,8 +90,8 @@ unless (any { $name eq $_ } @kernels) {
    push @kernels, $name;
 }
 
-if ($daemon) {
-   sleep $seconds;
+if ($config{daemon}) {
+   sleep $config{minutes} * 60;
    goto CHECK
 }
 
