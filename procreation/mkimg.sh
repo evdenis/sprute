@@ -163,7 +163,17 @@ setup_autologin () {
    check_dir "$1" &&
    #"${ldir}/chroot.sh" id -u "$2" &&
    check_user_chroot "$1" "$2" &&
-   sed -i -e "s#1:2345:respawn:/sbin/getty 38400 tty1#& --autologin ${2}#" "${1}/etc/inittab"
+   if [[ -e "${1}/etc/inittab" ]]
+   then
+      sed -i -e "s#1:2345:respawn:/sbin/getty 38400 tty1#& --autologin ${2}#" "${1}/etc/inittab"
+   else
+      mkdir -p "${1}/etc/systemd/system/getty@tty1.service.d"
+      cat <<EOF > "${1}/etc/systemd/system/getty@tty1.service.d/autologin.conf"
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin ${2} --noclear %I 38400 linux
+EOF
+   fi
 }
 
 # $1 - mountpoint
